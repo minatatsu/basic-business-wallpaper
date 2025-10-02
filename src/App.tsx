@@ -4,6 +4,7 @@ import { InputForm } from "./components/InputForm";
 import { TemplateSelector } from "./components/TemplateSelector";
 import { BackgroundPreview } from "./components/BackgroundPreview";
 import { DownloadButton } from "./components/DownloadButton";
+import { AuthGuard } from "./components/AuthGuard";
 import { Button } from "./components/ui/button";
 import { Toaster } from "./components/ui/sonner";
 import { ScrollArea } from "./components/ui/scroll-area";
@@ -50,8 +51,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Toaster />
+    <AuthGuard>
+      <div className="min-h-screen bg-background">
+        <Toaster />
 
       {/* Header */}
       <header className="border-b bg-card">
@@ -160,6 +162,7 @@ export default function App() {
         </AlertDialogContent>
       </AlertDialog>
 
-    </div>
+      </div>
+    </AuthGuard>
   );
 }
