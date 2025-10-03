@@ -32,7 +32,10 @@ function renderInfoFrame(
   // 空チェック
   const hasName =
     last_name_jp || first_name_jp || last_name_en || first_name_en;
-  const hasTeam = department_1 || department_2 || group || role;
+  const groupText = Array.isArray(group)
+    ? group.filter((g) => g.trim() !== "").join(" / ")
+    : group;
+  const hasTeam = department_1 || department_2 || groupText || role;
   if (!hasName && !hasTeam) return null;
 
   return (
@@ -166,7 +169,7 @@ function renderInfoFrame(
               )}
 
               {/* グループ */}
-              {group && <div>{group}</div>}
+              {groupText && <div>{groupText}</div>}
             </div>
 
             {/* 役職 */}

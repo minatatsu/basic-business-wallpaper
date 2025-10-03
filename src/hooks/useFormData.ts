@@ -10,7 +10,7 @@ const initialFormData: FormData = {
   first_name_en: "",
   department_1: "",
   department_2: "",
-  group: "",
+  group: [""],
   role: "",
   selected_templates: [],
 };
@@ -21,7 +21,16 @@ export function useFormData() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
-          return { ...initialFormData, ...JSON.parse(saved) };
+          const parsed = JSON.parse(saved);
+          // Migrate old group string to array
+          if (typeof parsed.group === "string") {
+            parsed.group = parsed.group ? [parsed.group] : [""];
+          }
+          // Ensure group is always an array
+          if (!Array.isArray(parsed.group)) {
+            parsed.group = [""];
+          }
+          return { ...initialFormData, ...parsed };
         } catch (e) {
           return initialFormData;
         }

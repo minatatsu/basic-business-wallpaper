@@ -1,10 +1,13 @@
 import { FormData } from "../types";
 import { FormInput } from "./FormInput";
 import { useState } from "react";
+import { Plus, X } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 interface InputFormProps {
   formData: FormData;
-  onUpdate: (field: keyof FormData, value: string) => void;
+  onUpdate: (field: keyof FormData, value: string | string[]) => void;
 }
 
 export function InputForm({ formData, onUpdate }: InputFormProps) {
@@ -48,6 +51,23 @@ export function InputForm({ formData, onUpdate }: InputFormProps) {
   const handleChange = (field: keyof FormData, value: string) => {
     onUpdate(field, value);
     validateField(field, value);
+  };
+
+  const handleGroupChange = (index: number, value: string) => {
+    const newGroups = [...formData.group];
+    newGroups[index] = value;
+    onUpdate("group", newGroups);
+  };
+
+  const addGroup = () => {
+    onUpdate("group", [...formData.group, ""]);
+  };
+
+  const removeGroup = (index: number) => {
+    if (formData.group.length > 1) {
+      const newGroups = formData.group.filter((_, i) => i !== index);
+      onUpdate("group", newGroups);
+    }
   };
 
   return (
@@ -111,13 +131,43 @@ export function InputForm({ formData, onUpdate }: InputFormProps) {
             placeholder="マーケティング部"
             error={errors.department_2}
           />
-          <FormInput
-            label="部門3（グループレベル）"
-            value={formData.group}
-            onChange={(v) => handleChange("group", v)}
-            placeholder="インサイドセールスグループ"
-            error={errors.group}
-          />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium mb-2">
+              部門3（グループレベル）
+            </label>
+            <div className="space-y-2">
+              {formData.group.map((group, index) => (
+                <div key={index} className="flex gap-2 items-start">
+                  <Input
+                    value={group}
+                    onChange={(e) => handleGroupChange(index, e.target.value)}
+                    placeholder="インサイドセールスグループ"
+                    className="flex-1"
+                  />
+                  {formData.group.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeGroup(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={addGroup}
+                className="text-blue-600 hover:text-blue-700 gap-1"
+              >
+                <Plus className="h-4 w-4" />
+                追加する
+              </Button>
+            </div>
+          </div>
           <FormInput
             label="役職"
             value={formData.role}

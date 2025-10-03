@@ -165,8 +165,22 @@ function renderSingleTextField(
   gapToNext: number = 0,
   flexDirection: "row" | "column" = "column",
 ) {
-  const value = formData[fieldName as keyof FormData];
-  if (!value || typeof value !== "string" || value.trim() === "") return null;
+  // Handle group field specially - join array with " / "
+  let value: string;
+  if (fieldName === "group") {
+    const groupValues = formData.group.filter((g) => g.trim() !== "");
+    if (groupValues.length === 0) return null;
+    value = groupValues.join(" / ");
+  } else {
+    const fieldValue = formData[fieldName as keyof FormData];
+    if (
+      !fieldValue ||
+      typeof fieldValue !== "string" ||
+      fieldValue.trim() === ""
+    )
+      return null;
+    value = fieldValue;
+  }
 
   // Convert to uppercase for English name fields
   const displayValue =

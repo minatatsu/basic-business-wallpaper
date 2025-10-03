@@ -5,7 +5,7 @@ export interface FormData {
   first_name_en: string;
   department_1: string;
   department_2: string;
-  group: string;
+  group: string[];
   role: string;
   selected_templates: string[];
 }
