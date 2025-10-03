@@ -184,9 +184,12 @@ export default function App() {
 
       {/* Fixed Footer with Download Button */}
       <footer
-        className="fixed left-0 right-0 border-t z-50"
+        className="fixed border-t z-50"
         style={{
           bottom: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
           backgroundColor: "rgba(255, 255, 255, 0.95)",
           backdropFilter: "blur(12px)",
         }}
