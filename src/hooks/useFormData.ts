@@ -12,6 +12,8 @@ const initialFormData: FormData = {
   department_2: "",
   group: [""],
   role: "",
+  affiliation_mode: "basic",
+  custom_affiliation: "",
   selected_templates: [],
 };
 
