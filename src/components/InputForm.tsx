@@ -195,7 +195,8 @@ export function InputForm({ formData, onUpdate }: InputFormProps) {
                     variant="ghost"
                     size="sm"
                     onClick={addGroup}
-                    className="text-blue-600 hover:text-blue-700 gap-1"
+                    className="gap-1"
+                    style={{ color: "#2563eb" }}
                   >
                     <Plus className="h-4 w-4" />
                     追加する

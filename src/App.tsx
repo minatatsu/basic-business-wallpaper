@@ -9,7 +9,7 @@ import { Button } from "./components/ui/button";
 import { Toaster } from "./components/ui/sonner";
 import { ScrollArea } from "./components/ui/scroll-area";
 import { Card } from "./components/ui/card";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, ExternalLink, FileText, Users } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -110,16 +110,58 @@ export default function App() {
 
               {/* Instructions */}
               <Card className="p-6 mt-4 bg-muted/50">
-                <h4 className="mb-3">使い方</h4>
+                <h5 className="text-sm font-semibold">使い方</h5>
                 <ol className="space-y-2 text-sm text-muted-foreground">
-                  <li>1. 姓名と所属情報を入力してください</li>
+                  <li>1. 姓名と所属情報を正確に入力してください</li>
                   <li>2. お好みのテンプレートを選択してください</li>
                   <li>3. プレビューで確認してください</li>
                   <li>4. ダウンロードボタンで画像を保存できます</li>
                 </ol>
-                <p className="text-xs text-muted-foreground mt-4">
+                <p className="text-xs text-muted-foreground">
                   ※ 複数選択時はZIPファイルでダウンロードされます
                 </p>
+
+                {/* Reference Links */}
+                <div className="mt-6 pt-6 border-t border-border">
+                  <h5 className="text-sm font-semibold mb-3">参考資料</h5>
+                  <div className="space-y-2">
+                    {/* Organization Chart */}
+                    <a
+                      href="https://docs.google.com/spreadsheets/d/1nsqdvkqLbsnp3mfkvBn7HJu4Bk0JS2Db4ShczSwko30/edit?usp=sharing"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 w-full"
+                    >
+                      <Users className="h-4 w-4" />
+                      <span>組織図</span>
+                      <ExternalLink
+                        className="ml-auto"
+                        style={{ width: "14px", height: "14px" }}
+                      />
+                    </a>
+
+                    {/* Documentation */}
+                    <a
+                      href="https://www.notion.so/MTG-208b412b2bb5808d8cc2ce67e27f92c8?source=copy_link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 w-full"
+                    >
+                      <FileText className="h-4 w-4" />
+                      <span>運用ドキュメント</span>
+                      <ExternalLink
+                        className="ml-auto"
+                        style={{ width: "14px", height: "14px" }}
+                      />
+                    </a>
+                  </div>
+                  <p
+                    className="text-xs text-muted-foreground"
+                    style={{ marginTop: "12px" }}
+                  >
+                    正式な部門・グループ名の確認や運用ルールの詳細は上記をご参照ください
+                  </p>
+                </div>
               </Card>
             </div>
           </div>
