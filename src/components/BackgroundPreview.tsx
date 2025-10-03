@@ -162,12 +162,11 @@ function renderInfoFrame(
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: `${8 * scale}px`,
               alignItems: "flex-end",
               fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: `${38 * scale}px`,
               fontWeight: 700,
-              lineHeight: "normal",
+              lineHeight: isForDownload ? 1.2 : 1,
               color: "#171717",
               whiteSpace: "nowrap",
             }}
