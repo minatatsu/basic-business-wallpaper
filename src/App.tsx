@@ -184,8 +184,12 @@ export default function App() {
 
       {/* Fixed Footer with Download Button */}
       <footer
-        className="fixed left-0 right-0 border-t bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 z-50"
-        style={{ bottom: 0 }}
+        className="fixed left-0 right-0 border-t z-50"
+        style={{
+          bottom: 0,
+          backgroundColor: "rgba(255, 255, 255, 0.95)",
+          backdropFilter: "blur(12px)",
+        }}
       >
         <div className="container mx-auto px-4 py-4">
           <div className="max-w-md mx-auto">
