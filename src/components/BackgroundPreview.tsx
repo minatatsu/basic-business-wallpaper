@@ -283,7 +283,7 @@ export function BackgroundPreview({
 
   return (
     <div className="space-y-4">
-      <h3>プレビュー</h3>
+      <h3 style={{fontWeight:700}}>プレビュー</h3>
       <Tabs value={currentTemplate} onValueChange={onTemplateChange}>
         {selectedTemplates.length > 1 && (
           <TabsList
@@ -291,6 +291,7 @@ export function BackgroundPreview({
             style={{
               gridTemplateColumns: `repeat(${selectedTemplates.length}, 1fr)`,
               height: "56px",
+              padding: "4px",
             }}
           >
             {selectedTemplates.map((template) => (

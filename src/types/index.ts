@@ -24,7 +24,7 @@ export const TEMPLATES: Template[] = [
   {
     id: "basic",
     name: "basic",
-    displayName: "Basic",
+    displayName: "basic",
     description: "シンプルな背景",
     nodeId: "41-6091",
   },

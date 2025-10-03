@@ -20,7 +20,7 @@ export function TemplateCard({
     <Card
       data-template-card={template.id}
       className={`p-4 cursor-pointer transition-all hover:shadow-md ${
-        selected ? "border-primary border-2 bg-primary/5" : ""
+        selected ? "border-blue-600 border-2 bg-blue-50" : ""
       }`}
       onClick={() => onToggle(template.id)}
     >

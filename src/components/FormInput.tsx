@@ -26,7 +26,7 @@ export function FormInput({
     <div className="space-y-2">
       <Label>
         {label}
-        {required && <span className="text-destructive ml-1">*</span>}
+        {required && <span className="text-red-600 ml-1">*</span>}
       </Label>
       <Input
         value={value}

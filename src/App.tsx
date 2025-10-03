@@ -51,24 +51,12 @@ export default function App() {
       <div className="min-h-screen bg-background">
         <Toaster />
 
-        {/* Header */}
-        <header className="border-b bg-card">
-          <div className="container mx-auto px-4 py-4">
-            <div>
-              <h1>MTG背景ジェネレーター</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                オンラインMTG用の背景画像を簡単に作成
-              </p>
-            </div>
-          </div>
-        </header>
-
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8 pb-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Form */}
             <div className="space-y-8">
-              <Card className="p-6">
+              <Card className="p-6 h-[calc(100%-20px)] overflow-hidden">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold">入力フォーム</h3>
                   <Button
@@ -78,11 +66,11 @@ export default function App() {
                     className="gap-2"
                   >
                     <RefreshCw className="h-4 w-4" />
-                    リセット
+                    入力内容をリセット
                   </Button>
                 </div>
-                <ScrollArea className="h-[calc(100vh-300px)]">
-                  <div className="pr-4 space-y-8">
+                <ScrollArea className="h-[calc(100vh-200px)]">
+                  <div className="px-1 pr-4 pb-4 space-y-8">
                     <InputForm formData={formData} onUpdate={updateField} />
 
                     <TemplateSelector
@@ -113,7 +101,7 @@ export default function App() {
                   <li>3. プレビューで確認してください</li>
                   <li>4. ダウンロードボタンで画像を保存できます</li>
                 </ol>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground text-right">
                   ※ 複数選択時はZIPファイルでダウンロードされます
                 </p>
 
@@ -131,7 +119,6 @@ export default function App() {
                       <Users className="h-4 w-4" />
                       <span>組織図</span>
                       <ExternalLink
-                        className="ml-auto"
                         style={{ width: "14px", height: "14px" }}
                       />
                     </a>
@@ -146,16 +133,15 @@ export default function App() {
                       <FileText className="h-4 w-4" />
                       <span>運用ドキュメント</span>
                       <ExternalLink
-                        className="ml-auto"
                         style={{ width: "14px", height: "14px" }}
                       />
                     </a>
                   </div>
                   <p
-                    className="text-xs text-muted-foreground"
+                    className="text-xs text-muted-foreground text-right"
                     style={{ marginTop: "12px" }}
                   >
-                    正式な部門・グループ名の確認や運用ルールの詳細は上記をご参照ください
+                    ※正式な部門・グループ名の確認や運用ルールの詳細は上記を参照
                   </p>
                 </div>
               </Card>
