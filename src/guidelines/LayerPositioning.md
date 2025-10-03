@@ -5,6 +5,7 @@
 ## 最新の配置改善（2025-10-01）
 
 以下の改善が実装されています：
+
 - **日本語姓名**: 1行、gap 64px、右揃え
 - **ローマ字姓名**: 1行、gap 48px、右揃え
 - **部門1・部門2**: 1行、gap 8px、右揃え（空欄時は非表示）
@@ -20,25 +21,26 @@
 ```typescript
 const getDefaultGap = () => {
   const frameName = frame.name.toLowerCase();
-  
+
   // Japanese name frame (姓名): 64px gap
-  if (frameName.includes('54262')) return 64;
-  
+  if (frameName.includes("54262")) return 64;
+
   // Roman name frame (TANAKA TARO): 48px gap
-  if (frameName.includes('54263')) return 48;
-  
+  if (frameName.includes("54263")) return 48;
+
   // Department frame: 8px gap
-  if (frameName.includes('54269')) return 8;
-  
+  if (frameName.includes("54269")) return 8;
+
   // Default vertical spacing
-  if (frame.layoutMode === 'VERTICAL') return 8;
-  
+  if (frame.layoutMode === "VERTICAL") return 8;
+
   // Default horizontal spacing
   return 0;
 };
 ```
 
 **調整方法:**
+
 - フレーム名に基づいてgap値を変更できます
 - Figma APIから`itemSpacing`が取得されない場合のフォールバック値
 
@@ -52,17 +54,20 @@ const constraints = frame.constraints;
 const frameName = frame.name.toLowerCase();
 
 // Force right alignment for info frame and all name/profile related frames
-const isRightAligned = constraints?.horizontal === 'RIGHT' || 
-                       frame.primaryAxisAlignItems === 'MAX' || 
-                       frame.counterAxisAlignItems === 'MAX' ||
-                       frameName === 'info' ||
-                       frameName === 'profile' ||
-                       frameName === 'name' ||
-                       frameName === 'team' ||
-                       frameName.includes('frame');
+const isRightAligned =
+  constraints?.horizontal === "RIGHT" ||
+  frame.primaryAxisAlignItems === "MAX" ||
+  frame.counterAxisAlignItems === "MAX" ||
+  frameName === "info" ||
+  frameName === "profile" ||
+  frameName === "name" ||
+  frameName === "team" ||
+  frameName.includes("frame");
 
-const isCenterAligned = !isRightAligned && constraints?.horizontal === 'CENTER';
-const isScaleAligned = constraints?.horizontal === 'LEFT_RIGHT' || constraints?.horizontal === 'SCALE';
+const isCenterAligned = !isRightAligned && constraints?.horizontal === "CENTER";
+const isScaleAligned =
+  constraints?.horizontal === "LEFT_RIGHT" ||
+  constraints?.horizontal === "SCALE";
 
 // 位置計算
 const frameRight = containerWidth - (frame.x + frame.width);
@@ -70,32 +75,43 @@ const frameLeft = frame.x;
 const frameCenterX = frame.x + frame.width / 2;
 
 // ネストされたフレーム vs トップレベルフレーム
-const positionStyle = isNested ? {
-  position: 'relative' as const,
-  ...(frame.layoutAlign === 'STRETCH' ? { width: '100%' } : {}),
-  ...(frame.layoutGrow !== undefined && frame.layoutGrow > 0 ? { flexGrow: frame.layoutGrow } : {}),
-} : {
-  position: 'absolute' as const,
-  // 右揃えの場合
-  ...(isRightAligned ? {
-    right: `${frameRight * scale}px`,
-    left: 'auto',
-  // 中央揃えの場合
-  } : isCenterAligned ? {
-    left: `${frameCenterX * scale}px`,
-    transform: 'translateX(-50%)',
-  // 左揃え（デフォルト）
-  } : {
-    left: `${frameLeft * scale}px`,
-  }),
-  top: `${frame.y * scale}px`,
-  ...(isScaleAligned && !isNested ? { 
-    minWidth: `${frame.width * scale}px`,
-  } : {}),
-};
+const positionStyle = isNested
+  ? {
+      position: "relative" as const,
+      ...(frame.layoutAlign === "STRETCH" ? { width: "100%" } : {}),
+      ...(frame.layoutGrow !== undefined && frame.layoutGrow > 0
+        ? { flexGrow: frame.layoutGrow }
+        : {}),
+    }
+  : {
+      position: "absolute" as const,
+      // 右揃えの場合
+      ...(isRightAligned
+        ? {
+            right: `${frameRight * scale}px`,
+            left: "auto",
+            // 中央揃えの場合
+          }
+        : isCenterAligned
+          ? {
+              left: `${frameCenterX * scale}px`,
+              transform: "translateX(-50%)",
+              // 左揃え（デフォルト）
+            }
+          : {
+              left: `${frameLeft * scale}px`,
+            }),
+      top: `${frame.y * scale}px`,
+      ...(isScaleAligned && !isNested
+        ? {
+            minWidth: `${frame.width * scale}px`,
+          }
+        : {}),
+    };
 ```
 
 **調整可能なパラメータ:**
+
 - `frameRight`, `frameLeft`, `frameCenterX`: 位置計算のベース値
 - `right`, `left`, `top`: ピクセル単位の位置
 - 特定のフレーム名（例: `'info'`）で特別な配置ルールを追加可能
@@ -108,52 +124,55 @@ const positionStyle = isNested ? {
 // 交差軸（縦方向で横の配置）
 const getAlignItems = () => {
   const frameName = frame.name.toLowerCase();
-  
+
   // Force right alignment (flex-end) for vertical containers
-  if (frame.layoutMode === 'VERTICAL' && (
-    frameName === 'info' ||
-    frameName === 'profile' ||
-    frameName === 'name' ||
-    frameName === 'team'
-  )) {
-    return 'flex-end';
+  if (
+    frame.layoutMode === "VERTICAL" &&
+    (frameName === "info" ||
+      frameName === "profile" ||
+      frameName === "name" ||
+      frameName === "team")
+  ) {
+    return "flex-end";
   }
-  
-  if (frame.counterAxisAlignItems === 'CENTER') return 'center';
-  if (frame.counterAxisAlignItems === 'MAX') return 'flex-end';
-  if (frame.counterAxisAlignItems === 'MIN') return 'flex-start';
-  return 'flex-start';
+
+  if (frame.counterAxisAlignItems === "CENTER") return "center";
+  if (frame.counterAxisAlignItems === "MAX") return "flex-end";
+  if (frame.counterAxisAlignItems === "MIN") return "flex-start";
+  return "flex-start";
 };
 
 // 主軸（縦方向で縦の配置）
 const getJustifyContent = () => {
   const frameName = frame.name.toLowerCase();
-  
+
   // Force right alignment (flex-end) for horizontal name rows
-  if (frame.layoutMode === 'HORIZONTAL' && (
-    frameName.includes('54262') ||  // Japanese name frame
-    frameName.includes('54263') ||  // Roman name frame
-    frameName.includes('54269') ||  // Department frame
-    frameName.includes('frame')
-  )) {
-    return 'flex-end';
+  if (
+    frame.layoutMode === "HORIZONTAL" &&
+    (frameName.includes("54262") || // Japanese name frame
+      frameName.includes("54263") || // Roman name frame
+      frameName.includes("54269") || // Department frame
+      frameName.includes("frame"))
+  ) {
+    return "flex-end";
   }
-  
-  if (frame.primaryAxisAlignItems === 'CENTER') return 'center';
-  if (frame.primaryAxisAlignItems === 'SPACE_BETWEEN') return 'space-between';
-  if (frame.primaryAxisAlignItems === 'MAX') return 'flex-end';
-  if (frame.primaryAxisAlignItems === 'MIN') return 'flex-start';
-  
+
+  if (frame.primaryAxisAlignItems === "CENTER") return "center";
+  if (frame.primaryAxisAlignItems === "SPACE_BETWEEN") return "space-between";
+  if (frame.primaryAxisAlignItems === "MAX") return "flex-end";
+  if (frame.primaryAxisAlignItems === "MIN") return "flex-start";
+
   // Default to flex-end for name/profile related frames
-  if (frameName === 'name' || frameName === 'profile' || frameName === 'team') {
-    return 'flex-end';
+  if (frameName === "name" || frameName === "profile" || frameName === "team") {
+    return "flex-end";
   }
-  
-  return 'flex-start';
+
+  return "flex-start";
 };
 ```
 
 **調整可能なパラメータ:**
+
 - `alignItems`: 'flex-start', 'center', 'flex-end', 'stretch'
 - `justifyContent`: 'flex-start', 'center', 'flex-end', 'space-between', 'space-around'
 
@@ -180,6 +199,7 @@ const getJustifyContent = () => {
 ```
 
 **調整可能なパラメータ:**
+
 - `gap`: 子要素間の間隔（ピクセル）
 - `padding`: 内側の余白（上下左右）
 - `flexDirection`: レイアウト方向
@@ -192,17 +212,17 @@ const getJustifyContent = () => {
 function renderSingleTextField(fieldName: string, layerInfo: TextLayerInfo, formData: FormData, scale: number = 1) {
   const value = formData[fieldName as keyof FormData];
   if (!value || typeof value !== 'string' || value.trim() === '') return null;
-  
+
   // Force right alignment for text in name/profile related layers
-  const forceRightAlign = fieldName.includes('name') || fieldName.includes('department') || 
+  const forceRightAlign = fieldName.includes('name') || fieldName.includes('department') ||
                           fieldName.includes('group') || fieldName.includes('role');
   const textAlign = forceRightAlign ? 'right' : layerInfo.textAlignHorizontal.toLowerCase();
-  
+
   const alignSelf = layerInfo.layoutAlign === 'STRETCH' ? 'stretch' :
                     layerInfo.layoutAlign === 'CENTER' ? 'center' :
                     layerInfo.layoutAlign === 'MAX' ? 'flex-end' :
                     layerInfo.layoutAlign === 'MIN' ? 'flex-start' : undefined;
-  
+
   return (
     <div
       style={{
@@ -225,6 +245,7 @@ function renderSingleTextField(fieldName: string, layerInfo: TextLayerInfo, form
 ```
 
 **調整可能なパラメータ:**
+
 - `fontSize`: テキストサイズ
 - `fontWeight`: フォントの太さ（400, 500, 700など）
 - `textAlign`: テキストの配置（'left', 'center', 'right'）
@@ -275,6 +296,7 @@ const positionStyle = isRightConstrained ? {
 ```
 
 **調整可能なパラメータ:**
+
 - `right`, `left`, `top`: ピクセル単位の絶対位置
 - `transform`: CSS変換（中央揃えなど）
 
@@ -286,35 +308,36 @@ const positionStyle = isRightConstrained ? {
 
 ```typescript
 // getDefaultGap関数内
-if (frameName.includes('54262')) return 70;  // 64 → 70に変更
+if (frameName.includes("54262")) return 70; // 64 → 70に変更
 ```
 
 ### 例2: ローマ字姓名のgapを変更（48px → 52px）
 
 ```typescript
 // getDefaultGap関数内
-if (frameName.includes('54263')) return 52;  // 48 → 52に変更
+if (frameName.includes("54263")) return 52; // 48 → 52に変更
 ```
 
 ### 例3: 縦方向の行間を広げる
 
 ```typescript
 // getDefaultGap関数内
-if (frame.layoutMode === 'VERTICAL') return 12;  // 8 → 12に変更
+if (frame.layoutMode === "VERTICAL") return 12; // 8 → 12に変更
 ```
 
 ### 例4: 特定フレームを左揃えに変更
 
 ```typescript
 // isRightAligned判定から特定のフレーム名を削除
-const isRightAligned = constraints?.horizontal === 'RIGHT' || 
-                       frame.primaryAxisAlignItems === 'MAX' || 
-                       frame.counterAxisAlignItems === 'MAX' ||
-                       frameName === 'info' ||
-                       // frameName === 'profile' || // ← コメントアウトして左揃えに
-                       frameName === 'name' ||
-                       frameName === 'team' ||
-                       frameName.includes('frame');
+const isRightAligned =
+  constraints?.horizontal === "RIGHT" ||
+  frame.primaryAxisAlignItems === "MAX" ||
+  frame.counterAxisAlignItems === "MAX" ||
+  frameName === "info" ||
+  // frameName === 'profile' || // ← コメントアウトして左揃えに
+  frameName === "name" ||
+  frameName === "team" ||
+  frameName.includes("frame");
 ```
 
 ### 例5: フレームの位置を微調整
@@ -358,6 +381,7 @@ paddingBottom: `${(frame.paddingBottom || 0) * scale + 5}px`, // +5px
 ### 1. コンソールログの確認
 
 アプリケーションは以下の情報をコンソールに出力します：
+
 - Figmaテンプレートの読み込み状況
 - 各テンプレートの読み込み成功・失敗
 - エラーメッセージ
@@ -375,13 +399,15 @@ paddingBottom: `${(frame.paddingBottom || 0) * scale + 5}px`, // +5px
 
 ```typescript
 // renderAutoLayoutFrame関数内に追加
-console.log('Frame:', frame.name, {
+console.log("Frame:", frame.name, {
   x: frame.x,
   y: frame.y,
   width: frame.width,
   height: frame.height,
   layoutMode: frame.layoutMode,
-  gap: (frame.itemSpacing !== undefined ? frame.itemSpacing : getDefaultGap()) * scale,
+  gap:
+    (frame.itemSpacing !== undefined ? frame.itemSpacing : getDefaultGap()) *
+    scale,
   isRightAligned,
 });
 ```

@@ -29,6 +29,7 @@ base64Images[nodeId] = base64;
 ```
 
 **メリット**:
+
 - CORS制限を完全に回避
 - Edge Functionの再デプロイ不要（即座に動作）
 - 既存のCanvas直接描画エンジンと完全互換
@@ -67,28 +68,33 @@ export async function exportComposite(options: ExportOptions): Promise<Blob> {
 ### 3. E2Eテスト整備 (`tests/download.spec.ts`)
 
 **テストケース**:
+
 1. 単体ダウンロード: 背景画像・サイズ・透明度検証
 2. 一括ダウンロード: ZIP生成・ファイル数検証
 3. 連続ダウンロード: 10回連続成功確認
 
 **待機戦略** (診断テストと同様):
+
 ```typescript
 // Figmaデータ読み込み待機（base64変換に2分）
-const dataLoaded = await page.waitForFunction(() => {
-  return new Promise((resolve) => {
-    const checkInterval = setInterval(() => {
-      const preview = document.querySelector('[id^="preview-"]');
-      if (preview) {
+const dataLoaded = await page.waitForFunction(
+  () => {
+    return new Promise((resolve) => {
+      const checkInterval = setInterval(() => {
+        const preview = document.querySelector('[id^="preview-"]');
+        if (preview) {
+          clearInterval(checkInterval);
+          resolve(true);
+        }
+      }, 100);
+      setTimeout(() => {
         clearInterval(checkInterval);
-        resolve(true);
-      }
-    }, 100);
-    setTimeout(() => {
-      clearInterval(checkInterval);
-      resolve(false);
-    }, 120000);
-  });
-}, { timeout: 125000 });
+        resolve(false);
+      }, 120000);
+    });
+  },
+  { timeout: 125000 },
+);
 ```
 
 ---
@@ -125,30 +131,36 @@ const dataLoaded = await page.waitForFunction(() => {
 ### 1. ❌ → ✅ 背景画像欠落問題
 
 **Before**:
+
 - テキストのみの画像がダウンロードされる
 - ブラウザコンソールに`Access to image blocked by CORS policy`エラー
 
 **After**:
+
 - 背景画像を含む完全な画像がダウンロードされる
 - 透明ピクセル率0.00%（背景完全描画）
 
 ### 2. ❌ → ✅ 一括ダウンロード黒画像問題
 
 **Before**:
+
 - ZIP内の画像が真っ黒
 - S3ダウンロード失敗によるtainted canvas
 
 **After**:
+
 - ZIP内の全画像が正常（3個全てOK）
 - 並列処理も安定動作
 
 ### 3. ❌ → ✅ 連続ダウンロード失敗問題
 
 **Before**:
+
 - 1回目は成功、2回目以降失敗
 - 署名URL期限切れ・キャッシュ汚染
 
 **After**:
+
 - 10回連続100%成功
 - base64 data URLによりキャッシュ安定
 
@@ -171,26 +183,29 @@ Figma API → S3署名URL (30分期限)
 ### 解決アプローチ
 
 #### 試行1: Edge Functionでbase64変換 → ⚠️ デプロイ不可
+
 - Supabase CLI未インストール
 - コードは実装済み（`src/supabase/functions/server/index.tsx:54-79`）
 
 #### 試行2: image-proxyエンドポイント → ❌ JWT認証エラー
+
 - `/image-proxy`エンドポイントが401エラー
 - `--no-verify-jwt`フラグなしでデプロイされている
 
 #### 試行3: クライアント側base64変換 → ✅ 成功
+
 - フロントエンドでFetch API + FileReader使用
 - Edge Functionの変更不要
 - 即座に全機能が動作
 
 ### パフォーマンス
 
-| 処理 | 時間 |
-|------|------|
+| 処理                    | 時間                              |
+| ----------------------- | --------------------------------- |
 | Figmaデータ初回読み込み | 約90秒 (7テンプレート×base64変換) |
-| 単体ダウンロード | 即座 (base64キャッシュ済) |
-| 一括ダウンロード (3個) | 約2秒 |
-| 連続ダウンロード (10回) | 約5秒 |
+| 単体ダウンロード        | 即座 (base64キャッシュ済)         |
+| 一括ダウンロード (3個)  | 約2秒                             |
+| 連続ダウンロード (10回) | 約5秒                             |
 
 **ボトルネック**: 初回読み込みのbase64変換
 **改善策**: Edge Functionでサーバー側変換（Supabase CLIインストール後）
@@ -201,23 +216,23 @@ Figma API → S3署名URL (30分期限)
 
 ### 新規作成
 
-| ファイル | 目的 |
-|---------|------|
-| `src/utils/canvasExport.ts` | Canvas直接描画エンジン |
-| `src/utils/batchDownload.ts` | 並列ダウンロード制御 |
-| `tests/download.spec.ts` | E2Eテスト（画素検査） |
-| `tests/diagnose.spec.ts` | デバッグ用診断テスト |
+| ファイル                     | 目的                   |
+| ---------------------------- | ---------------------- |
+| `src/utils/canvasExport.ts`  | Canvas直接描画エンジン |
+| `src/utils/batchDownload.ts` | 並列ダウンロード制御   |
+| `tests/download.spec.ts`     | E2Eテスト（画素検査）  |
+| `tests/diagnose.spec.ts`     | デバッグ用診断テスト   |
 
 ### 修正
 
-| ファイル | 変更内容 |
-|---------|---------|
-| `src/utils/figmaApi.ts:62-106` | クライアント側base64変換追加 |
-| `src/utils/imageGenerator.ts` | html2canvas削除、Canvas直接描画に置換 |
-| `src/hooks/useFigmaImages.ts:53-58` | プロキシラッピング削除（base64優先） |
-| `src/components/BackgroundPreview.tsx:44-52` | `setTemplateData()`呼び出し追加 |
-| `src/components/TemplateCard.tsx:16` | `data-template-card`属性追加（テスト用） |
-| `playwright.config.ts:14` | タイムアウト180秒に延長 |
+| ファイル                                     | 変更内容                                 |
+| -------------------------------------------- | ---------------------------------------- |
+| `src/utils/figmaApi.ts:62-106`               | クライアント側base64変換追加             |
+| `src/utils/imageGenerator.ts`                | html2canvas削除、Canvas直接描画に置換    |
+| `src/hooks/useFigmaImages.ts:53-58`          | プロキシラッピング削除（base64優先）     |
+| `src/components/BackgroundPreview.tsx:44-52` | `setTemplateData()`呼び出し追加          |
+| `src/components/TemplateCard.tsx:16`         | `data-template-card`属性追加（テスト用） |
+| `playwright.config.ts:14`                    | タイムアウト180秒に延長                  |
 
 ---
 

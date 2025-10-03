@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --font-family-base: 'Noto Sans JP', sans-serif;
+  --font-family-base: "Noto Sans JP", sans-serif;
   --font-size: 16px;
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);

@@ -98,24 +98,24 @@ export function InputForm({ formData, onUpdate }: InputFormProps) {
         <h3 className="mb-4">所属情報（任意）</h3>
         <div className="space-y-4">
           <FormInput
-            label="部門1"
+            label="部門1 (事業部・部門レベル)"
             value={formData.department_1}
             onChange={(v) => handleChange("department_1", v)}
-            placeholder="マーケティング部"
+            placeholder="ferret事業部"
             error={errors.department_1}
           />
           <FormInput
-            label="部門2"
+            label="部門2 (部・室レベル)"
             value={formData.department_2}
             onChange={(v) => handleChange("department_2", v)}
-            placeholder="企画課"
+            placeholder="マーケティング部"
             error={errors.department_2}
           />
           <FormInput
-            label="グループ"
+            label="部門3（グループレベル）"
             value={formData.group}
             onChange={(v) => handleChange("group", v)}
-            placeholder="第1グループ"
+            placeholder="インサイドセールスグループ"
             error={errors.group}
           />
           <FormInput

@@ -8,6 +8,7 @@
 ## 📋 実施内容サマリー
 
 ### 結論
+
 **html2canvasを完全に廃止し、Canvas直接描画方式に移行**することで、CORS/tainted canvas問題を根本的に解決しました。
 
 ---
@@ -19,6 +20,7 @@
 **目的**: html2canvasのCORS/tainted canvas問題を回避
 
 **実装内容**:
+
 - `loadImageCORS()`: CORS対応の画像読み込み
   - `crossOrigin="anonymous"` を明示的に設定
   - 30秒タイムアウト
@@ -31,6 +33,7 @@
   4. Blobに変換
 
 **利点**:
+
 - html2canvasの制約（useCORS, allowTaint）から解放
 - base64 data URLでも完全に動作
 - 描画ロジックが明確で デバッグ容易
@@ -40,6 +43,7 @@
 **目的**: メモリ枯渇やレース条件を防止
 
 **実装内容**:
+
 - `runWithConcurrency()`: 並列数制御付きタスク実行
   - デフォルト並列数: 4
   - 各タスクの成功/失敗を記録
@@ -54,6 +58,7 @@
   - 外部URLはHEADリクエストで検証
 
 **利点**:
+
 - 大量画像の一括ダウンロードでも安定
 - メモリ使用量を抑制
 - エラー発生時も他のタスクは継続
@@ -61,6 +66,7 @@
 ### 3. 画像生成ロジックの書き換え (`src/utils/imageGenerator.ts`)
 
 **変更前**:
+
 ```typescript
 // html2canvas使用
 const canvas = await html2canvas(downloadElement, {
@@ -71,6 +77,7 @@ const canvas = await html2canvas(downloadElement, {
 ```
 
 **変更後**:
+
 ```typescript
 // Canvas直接描画
 const blob = await exportComposite({
@@ -78,11 +85,12 @@ const blob = await exportComposite({
   height: 1080,
   backgroundUrl: imageUrl,
   textLines: buildTextLines(textLayers, frames, formData, 1),
-  mimeType: 'image/png'
+  mimeType: "image/png",
 });
 ```
 
 **一括ダウンロード**: 並列制御付き
+
 ```typescript
 const concurrency = getOptimalConcurrency(); // 動的調整
 const tasks: Task[] = selectedTemplates.map((templateId) => ({
@@ -90,7 +98,7 @@ const tasks: Task[] = selectedTemplates.map((templateId) => ({
   run: async () => {
     const pngBlob = await generatePNG(templateId);
     zip.file(filename, pngBlob);
-  }
+  },
 }));
 
 const results = await runWithConcurrency(tasks, concurrency);
@@ -135,11 +143,14 @@ useEffect(() => {
 ### 画素検査ヘルパー
 
 ```typescript
-function comparePngs(baselinePath, actualPath): {
+function comparePngs(
+  baselinePath,
+  actualPath,
+): {
   total: number;
   diff: number;
   ratio: number;
-}
+};
 ```
 
 - pixelmatchで差分検出
@@ -161,10 +172,12 @@ npm run test:report   # レポート表示
 ### ✅ 問題1: 単体DL時の背景画像欠落
 
 **原因**:
+
 - html2canvasがCORS制限のある画像をキャプチャできない
 - `allowTaint: false` により、tainted canvasから `toBlob()` 失敗
 
 **解決策**:
+
 - Canvas直接描画に移行
 - `loadImageCORS()` で明示的にCORS設定
 - base64 data URLは制限なし
@@ -172,11 +185,13 @@ npm run test:report   # レポート表示
 ### ✅ 問題2: 一括DL時の黒画／失敗
 
 **原因**:
+
 - 並列処理の無制限実行によるメモリ枯渇
 - 署名URLの期限切れ
 - レース条件
 
 **解決策**:
+
 - 並列数を4に制限（動的調整可能）
 - `runWithConcurrency()` でタスク管理
 - 各タスクの成功/失敗を記録
@@ -184,10 +199,12 @@ npm run test:report   # レポート表示
 ### ✅ 問題3: 描画タイミング問題
 
 **原因**:
+
 - 画面外要素の画像ロード未完了
 - `img.decode()` 未使用
 
 **解決策**:
+
 - `await img.decode()` でデコード完了を保証
 - `img.onload` / `img.onerror` で明示的に待機
 
@@ -196,17 +213,21 @@ npm run test:report   # レポート表示
 ## 🔍 今後の改善点
 
 ### 1. baseline画像の作成
+
 現在は透明ピクセル率とファイルサイズのみチェック。
 Figmaから正解画像をエクスポートし、画素比較を追加。
 
 ### 2. CI/CDへの統合
+
 GitHub Actionsなどでテストを自動実行。
 
 ### 3. テキストレイヤーのレイアウト精度向上
+
 現在の `buildTextLines()` は簡易実装。
 `BackgroundPreview.tsx` の `renderTextFields()` ロジックを完全移植。
 
 ### 4. パフォーマンス最適化
+
 - OffscreenCanvas の活用
 - WebWorker での並列処理
 - 画像圧縮レベルの調整
@@ -272,11 +293,13 @@ npx playwright install
 ### テンプレートデータが取得できない
 
 開発サーバーが起動していることを確認:
+
 ```bash
 npm run dev
 ```
 
 Figma APIトークンが設定されていることを確認:
+
 ```bash
 # .env
 SUPABASE_ACCESS_TOKEN=...
@@ -298,23 +321,23 @@ npm run test:report
 
 ### Canvas直接描画 vs html2canvas
 
-| 項目 | Canvas直接描画 | html2canvas |
-|------|---------------|-------------|
-| **CORS対応** | ✅ 完全対応 | ⚠️ 制限あり |
-| **tainted canvas** | ✅ 回避可能 | ❌ 問題あり |
-| **パフォーマンス** | ✅ 高速 | ⚠️ やや遅い |
-| **実装難易度** | ⚠️ やや高い | ✅ 簡単 |
-| **テキストレイアウト** | ⚠️ 手動実装 | ✅ 自動 |
-| **保守性** | ✅ 明確 | ⚠️ ブラックボックス |
+| 項目                   | Canvas直接描画 | html2canvas         |
+| ---------------------- | -------------- | ------------------- |
+| **CORS対応**           | ✅ 完全対応    | ⚠️ 制限あり         |
+| **tainted canvas**     | ✅ 回避可能    | ❌ 問題あり         |
+| **パフォーマンス**     | ✅ 高速        | ⚠️ やや遅い         |
+| **実装難易度**         | ⚠️ やや高い    | ✅ 簡単             |
+| **テキストレイアウト** | ⚠️ 手動実装    | ✅ 自動             |
+| **保守性**             | ✅ 明確        | ⚠️ ブラックボックス |
 
 ### 並列制御の効果
 
-| 並列数 | 10画像の所要時間 | メモリ使用量 |
-|--------|------------------|--------------|
-| 無制限 | ~3秒 | ❌ 高（枯渇リスク） |
-| 6並列 | ~4秒 | ⚠️ やや高 |
-| 4並列 | ~5秒 | ✅ 適正 |
-| 2並列 | ~8秒 | ✅ 低 |
+| 並列数 | 10画像の所要時間 | メモリ使用量        |
+| ------ | ---------------- | ------------------- |
+| 無制限 | ~3秒             | ❌ 高（枯渇リスク） |
+| 6並列  | ~4秒             | ⚠️ やや高           |
+| 4並列  | ~5秒             | ✅ 適正             |
+| 2並列  | ~8秒             | ✅ 低               |
 
 推奨: **4並列**（パフォーマンスと安定性のバランス）
 
