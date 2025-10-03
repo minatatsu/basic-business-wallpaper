@@ -16,7 +16,16 @@ export function TemplateSelector({
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="mb-2" style={{ borderLeft: "4px solid #2563eb", paddingLeft: "12px", fontWeight: "bold" }}>テンプレート選択</h3>
+        <h3
+          className="mb-2"
+          style={{
+            borderLeft: "4px solid #2563eb",
+            paddingLeft: "12px",
+            fontWeight: "bold",
+          }}
+        >
+          テンプレート選択
+        </h3>
         <p className="text-sm text-muted-foreground">
           1つ以上のテンプレートを選択してください
           {selectedTemplates.length > 0 &&

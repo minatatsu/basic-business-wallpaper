@@ -1,11 +1,17 @@
 import { FormData } from "../types";
 import { FormInput } from "./FormInput";
 import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, X, HelpCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Textarea } from "./ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface InputFormProps {
   formData: FormData;
@@ -136,102 +142,125 @@ export function InputForm({ formData, onUpdate }: InputFormProps) {
           >
             所属情報
           </h3>
-          <Tabs
-            value={formData.affiliation_mode}
-            onValueChange={(v: string) =>
-              onUpdate("affiliation_mode", v as "basic" | "custom")
-            }
-            className="flex-1"
-          >
-            <TabsList>
-              <TabsTrigger value="basic">基本入力</TabsTrigger>
-              <TabsTrigger value="custom">カスタム入力</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="basic" className="space-y-4 mt-4">
-              <FormInput
-                label="部門1 (事業部・部門レベル)"
-                value={formData.department_1}
-                onChange={(v) => handleChange("department_1", v)}
-                placeholder="ferret事業部"
-                error={errors.department_1}
-              />
-              <FormInput
-                label="部門2 (部・室レベル)"
-                value={formData.department_2}
-                onChange={(v) => handleChange("department_2", v)}
-                placeholder="マーケティング部"
-                error={errors.department_2}
-              />
-              <div className="space-y-2">
-                <label className="block text-sm font-medium mb-2">
-                  部門3（グループレベル）
-                </label>
-                <div className="space-y-2">
-                  {formData.group.map((group, index) => (
-                    <div key={index} className="flex gap-2 items-start">
-                      <Input
-                        value={group}
-                        onChange={(e) =>
-                          handleGroupChange(index, e.target.value)
-                        }
-                        placeholder="インサイドセールスグループ"
-                        className="flex-1"
-                      />
-                      {formData.group.length > 1 && (
-                        <Button
+          <TooltipProvider delayDuration={100}>
+            <Tabs
+              value={formData.affiliation_mode}
+              onValueChange={(v: string) =>
+                onUpdate("affiliation_mode", v as "basic" | "custom")
+              }
+              className="flex-1"
+            >
+              <div className="relative inline-flex items-center">
+                <TabsList>
+                  <TabsTrigger value="basic">基本入力</TabsTrigger>
+                  <TabsTrigger value="custom" className="relative">
+                    カスタム入力
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
                           type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeGroup(index)}
+                          className="inline-flex items-center justify-center ml-1"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
                         >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={addGroup}
-                    className="gap-1"
-                    style={{ color: "#2563eb" }}
-                  >
-                    <Plus className="h-4 w-4" />
-                    追加する
-                  </Button>
-                </div>
+                          <HelpCircle className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>複数の事業部を兼任されている方向け</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TabsTrigger>
+                </TabsList>
               </div>
-              <FormInput
-                label="役職"
-                value={formData.role}
-                onChange={(v) => handleChange("role", v)}
-                placeholder="マネージャー"
-                error={errors.role}
-              />
-            </TabsContent>
 
-            <TabsContent value="custom" className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">
-                  所属・役職（自由入力）
-                </label>
-                <Textarea
-                  value={formData.custom_affiliation}
-                  onChange={(e) =>
-                    onUpdate("custom_affiliation", e.target.value)
-                  }
-                  placeholder="例:&#10;ferret事業部&#10;マーケティング部&#10;インサイドセールスグループ / プロダクト&#10;&#10;マネージャー"
-                  rows={8}
-                  className="resize-none"
+              <TabsContent value="basic" className="space-y-4 mt-4">
+                <FormInput
+                  label="部門1 (事業部・部門レベル)"
+                  value={formData.department_1}
+                  onChange={(v) => handleChange("department_1", v)}
+                  placeholder="ferret事業部"
+                  error={errors.department_1}
                 />
-                <p className="text-xs text-muted-foreground">
-                  ※ 改行はプレビューにそのまま反映されます
-                </p>
-              </div>
-            </TabsContent>
-          </Tabs>
+                <FormInput
+                  label="部門2 (部・室レベル)"
+                  value={formData.department_2}
+                  onChange={(v) => handleChange("department_2", v)}
+                  placeholder="マーケティング部"
+                  error={errors.department_2}
+                />
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium mb-2">
+                    部門3（グループレベル）
+                  </label>
+                  <div className="space-y-2">
+                    {formData.group.map((group, index) => (
+                      <div key={index} className="flex gap-2 items-start">
+                        <Input
+                          value={group}
+                          onChange={(e) =>
+                            handleGroupChange(index, e.target.value)
+                          }
+                          placeholder="インサイドセールスグループ"
+                          className="flex-1"
+                        />
+                        {formData.group.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeGroup(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={addGroup}
+                      className="gap-1"
+                      style={{ color: "#2563eb" }}
+                    >
+                      <Plus className="h-4 w-4" />
+                      追加する
+                    </Button>
+                  </div>
+                </div>
+                <FormInput
+                  label="役職"
+                  value={formData.role}
+                  onChange={(v) => handleChange("role", v)}
+                  placeholder="マネージャー"
+                  error={errors.role}
+                />
+              </TabsContent>
+
+              <TabsContent value="custom" className="space-y-4 mt-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium">
+                    所属・役職（自由入力）
+                  </label>
+                  <Textarea
+                    value={formData.custom_affiliation}
+                    onChange={(e) =>
+                      onUpdate("custom_affiliation", e.target.value)
+                    }
+                    placeholder="例:&#10;ferret事業部&#10;マーケティング部&#10;インサイドセールスグループ / プロダクト&#10;&#10;マネージャー"
+                    rows={8}
+                    className="resize-none"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    ※ 改行はプレビューにそのまま反映されます
+                  </p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </TooltipProvider>
         </div>
       </div>
     </div>

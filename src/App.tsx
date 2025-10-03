@@ -118,9 +118,7 @@ export default function App() {
                     >
                       <Users className="h-4 w-4" />
                       <span>組織図</span>
-                      <ExternalLink
-                        style={{ width: "14px", height: "14px" }}
-                      />
+                      <ExternalLink style={{ width: "14px", height: "14px" }} />
                     </a>
 
                     {/* Documentation */}
@@ -132,9 +130,7 @@ export default function App() {
                     >
                       <FileText className="h-4 w-4" />
                       <span>運用ドキュメント</span>
-                      <ExternalLink
-                        style={{ width: "14px", height: "14px" }}
-                      />
+                      <ExternalLink style={{ width: "14px", height: "14px" }} />
                     </a>
                   </div>
                   <p

@@ -283,7 +283,7 @@ export function BackgroundPreview({
 
   return (
     <div className="space-y-4">
-      <h3 style={{fontWeight:700}}>プレビュー</h3>
+      <h3 style={{ fontWeight: 700 }}>プレビュー</h3>
       <Tabs value={currentTemplate} onValueChange={onTemplateChange}>
         {selectedTemplates.length > 1 && (
           <TabsList

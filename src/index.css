@@ -5,11 +5,11 @@
   --font-family-base: "Noto Sans JP", sans-serif;
   --font-size: 16px;
   --background: #fff;
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(0.3 0 0);
   --card: #fff;
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.3 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.3 0 0);
   --primary: #030213;
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.95 0.0058 264.53);
