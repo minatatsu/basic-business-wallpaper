@@ -2,9 +2,8 @@ import { FormData, TEMPLATES, TextLayerInfo, FrameLayoutInfo } from "../types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Card } from "./ui/card";
 import { useEffect, useRef, useState, useMemo, JSX } from "react";
-import { useFigmaImages } from "../hooks/useFigmaImages";
+import { useLoading } from "../context/LoadingContext";
 import { Skeleton } from "./ui/skeleton";
-import { setTemplateData } from "../utils/imageGenerator";
 import { renderInfoFrame } from "./BackgroundPreview_new";
 
 interface TemplateDataType {
@@ -42,28 +41,11 @@ export function BackgroundPreview({
   onTemplateChange,
 }: BackgroundPreviewProps) {
   const selectedTemplates = TEMPLATES.filter((t) =>
-    formData.selected_templates.includes(t.id)
+    formData.selected_templates.includes(t.id),
   );
   const currentTemplate =
     activeTemplate || selectedTemplates[0]?.id || TEMPLATES[0].id;
-  const { templateData, loading, error } = useFigmaImages();
-
-  // テンプレートデータをimageGeneratorに設定
-  useEffect(() => {
-    if (Object.keys(templateData).length > 0) {
-      setTemplateData(templateData);
-      console.log(
-        "[BackgroundPreview] Template data set:",
-        Object.keys(templateData).map((key) => ({
-          id: key,
-          hasImageUrl: !!templateData[key]?.imageUrl,
-          imageUrl: templateData[key]?.imageUrl?.substring(0, 50) + "...",
-          textLayersCount: Object.keys(templateData[key]?.textLayers || {})
-            .length,
-        }))
-      );
-    }
-  }, [templateData]);
+  const { templateData, isLoading: loading, error } = useLoading();
 
   if (loading) {
     return (
@@ -165,7 +147,7 @@ const getFillColor = (fills: any[]): string => {
     const { r, g, b } = fill.color;
     const opacity = fill.opacity !== undefined ? fill.opacity : 1;
     return `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(
-      b * 255
+      b * 255,
     )}, ${opacity})`;
   }
 
@@ -181,7 +163,7 @@ function renderSingleTextField(
   parentFrameName?: string,
   isForDownload: boolean = false,
   gapToNext: number = 0,
-  flexDirection: "row" | "column" = "column"
+  flexDirection: "row" | "column" = "column",
 ) {
   const value = formData[fieldName as keyof FormData];
   if (!value || typeof value !== "string" || value.trim() === "") return null;
@@ -213,12 +195,12 @@ function renderSingleTextField(
     layerInfo.layoutAlign === "STRETCH"
       ? "stretch"
       : layerInfo.layoutAlign === "CENTER"
-      ? "center"
-      : layerInfo.layoutAlign === "MAX"
-      ? "flex-end"
-      : layerInfo.layoutAlign === "MIN"
-      ? "flex-start"
-      : undefined;
+        ? "center"
+        : layerInfo.layoutAlign === "MAX"
+          ? "flex-end"
+          : layerInfo.layoutAlign === "MIN"
+            ? "flex-start"
+            : undefined;
 
   // Force line-height to 1 for name fields (Japanese and Roman)
   const parentNameLower = parentFrameName?.toLowerCase() || "";
@@ -279,7 +261,7 @@ function renderAutoLayoutFrame(
   containerWidth: number = 1920,
   isNested: boolean = false,
   depth: number = 0,
-  isForDownload: boolean = false
+  isForDownload: boolean = false,
 ) {
   // Prevent infinite recursion
   if (depth > 10) {
@@ -328,7 +310,7 @@ function renderAutoLayoutFrame(
     // Check if this child frame has any direct text layers with content
     const hasDirectText = childFrame.children.some((childId) => {
       const textLayer = Object.entries(textLayers).find(
-        ([_, layer]) => layer.id === childId
+        ([_, layer]) => layer.id === childId,
       );
       if (!textLayer) return false;
 
@@ -353,7 +335,6 @@ function renderAutoLayoutFrame(
   // Get frame name once to avoid duplicate declarations
   const frameName = frame.name.toLowerCase();
   const frameId = frame.id.toLowerCase();
-
 
   // Determine default gap based on frame name and layout mode
   const getDefaultGap = () => {
@@ -389,10 +370,11 @@ function renderAutoLayoutFrame(
 
   // Use the default gap calculation for all frames
   // ダウンロード時のFrame 1は強制的にdefaultGapを使用
-  const gap = (frameName === "frame 1" && isForDownload)
-    ? defaultGap * scale
-    : (frame.itemSpacing !== undefined ? frame.itemSpacing : defaultGap) * scale;
-
+  const gap =
+    frameName === "frame 1" && isForDownload
+      ? defaultGap * scale
+      : (frame.itemSpacing !== undefined ? frame.itemSpacing : defaultGap) *
+        scale;
 
   // Determine horizontal positioning based on constraints
   const constraints = frame.constraints;
@@ -433,36 +415,36 @@ function renderAutoLayoutFrame(
           : {}),
       }
     : isInfoFrame
-    ? {
-        // Info/Profileフレームは固定位置
-        position: "absolute" as const,
-        top: `${120 * scale}px`,
-        right: `${88 * scale}px`,
-        left: "auto",
-      }
-    : {
-        position: "absolute" as const,
-        ...(isRightAligned
-          ? {
-              right: `${frameRight * scale}px`,
-              left: "auto",
-            }
-          : isCenterAligned
-          ? {
-              left: `${frameCenterX * scale}px`,
-              transform: "translateX(-50%)",
-            }
-          : {
-              left: `${frameLeft * scale}px`,
-            }),
-        top: `${frame.y * scale}px`,
-        // If scale aligned, potentially adjust width
-        ...(isScaleAligned && !isNested
-          ? {
-              minWidth: `${frame.width * scale}px`,
-            }
-          : {}),
-      };
+      ? {
+          // Info/Profileフレームは固定位置
+          position: "absolute" as const,
+          top: `${120 * scale}px`,
+          right: `${88 * scale}px`,
+          left: "auto",
+        }
+      : {
+          position: "absolute" as const,
+          ...(isRightAligned
+            ? {
+                right: `${frameRight * scale}px`,
+                left: "auto",
+              }
+            : isCenterAligned
+              ? {
+                  left: `${frameCenterX * scale}px`,
+                  transform: "translateX(-50%)",
+                }
+              : {
+                  left: `${frameLeft * scale}px`,
+                }),
+          top: `${frame.y * scale}px`,
+          // If scale aligned, potentially adjust width
+          ...(isScaleAligned && !isNested
+            ? {
+                minWidth: `${frame.width * scale}px`,
+              }
+            : {}),
+        };
 
   // Determine alignment based on primaryAxisAlignItems and counterAxisAlignItems
   const getAlignItems = () => {
@@ -557,8 +539,8 @@ function renderAutoLayoutFrame(
           index < frameTextLayers.length - 1 || nonEmptyChildFrames.length > 0
             ? gap
             : 0,
-          flexDirection
-        )
+          flexDirection,
+        ),
       )}
 
       {/* Render child frames with margin for spacing */}
@@ -573,7 +555,7 @@ function renderAutoLayoutFrame(
           containerWidth,
           true,
           depth + 1,
-          isForDownload
+          isForDownload,
         );
 
         // Wrap child frame with margin
@@ -605,7 +587,7 @@ function renderTextFields(
   formData: FormData,
   scale: number = 1,
   containerWidth: number = 1920,
-  isForDownload: boolean = false
+  isForDownload: boolean = false,
 ) {
   const elements: JSX.Element[] = [];
   const processedLayerIds = new Set<string>();
@@ -655,17 +637,17 @@ function renderTextFields(
             left: "auto",
           }
         : isCenterConstrained
-        ? {
-            left: `${layerCenterX * scale}px`,
-            transform: "translateX(-50%)",
-          }
-        : {
-            left: `${layerInfo.x * scale}px`,
-          };
+          ? {
+              left: `${layerCenterX * scale}px`,
+              transform: "translateX(-50%)",
+            }
+          : {
+              left: `${layerInfo.x * scale}px`,
+            };
 
       // Position adjustment for download - ローマ字名を下げる
       const isRomanName = fieldName.includes("name_en");
-      const topAdjustment = isForDownload && isRomanName ? 30 : 0;  // ダウンロード時はローマ字名を30px下げる
+      const topAdjustment = isForDownload && isRomanName ? 30 : 0; // ダウンロード時はローマ字名を30px下げる
       const topPosition = `${(layerInfo.y + topAdjustment) * scale}px`;
 
       elements.push(
@@ -687,7 +669,7 @@ function renderTextFields(
           }}
         >
           {displayValue}
-        </div>
+        </div>,
       );
     });
     return elements;
@@ -697,12 +679,12 @@ function renderTextFields(
   const allChildFrameIds = new Set<string>();
   Object.values(frames).forEach((frame) => {
     (frame.childFrames || []).forEach((childId) =>
-      allChildFrameIds.add(childId)
+      allChildFrameIds.add(childId),
     );
   });
 
   const topLevelFrames = Object.values(frames).filter(
-    (frame) => !allChildFrameIds.has(frame.id)
+    (frame) => !allChildFrameIds.has(frame.id),
   );
 
   console.log(`Rendering ${topLevelFrames.length} top-level frames`);
@@ -719,7 +701,7 @@ function renderTextFields(
         containerWidth,
         false,
         0,
-        isForDownload
+        isForDownload,
       );
       if (frameElement) {
         elements.push(frameElement);
@@ -776,13 +758,13 @@ function renderTextFields(
           left: "auto",
         }
       : isCenterConstrained
-      ? {
-          left: `${layerCenterX * scale}px`,
-          transform: "translateX(-50%)",
-        }
-      : {
-          left: `${layerInfo.x * scale}px`,
-        };
+        ? {
+            left: `${layerCenterX * scale}px`,
+            transform: "translateX(-50%)",
+          }
+        : {
+            left: `${layerInfo.x * scale}px`,
+          };
 
     // Force line-height to 1 for name fields
     const isNameField =
@@ -801,7 +783,7 @@ function renderTextFields(
 
     // Position adjustment for download - ローマ字名を下げる
     const isRomanName = fieldName.includes("name_en");
-    const topAdjustment = isForDownload && isRomanName ? 30 : 0;  // ダウンロード時はローマ字名を30px下げる
+    const topAdjustment = isForDownload && isRomanName ? 30 : 0; // ダウンロード時はローマ字名を30px下げる
     const topPosition = `${(layerInfo.y + topAdjustment) * scale}px`;
 
     elements.push(
@@ -823,7 +805,7 @@ function renderTextFields(
         }}
       >
         {displayValue}
-      </div>
+      </div>,
     );
   });
 
@@ -849,29 +831,31 @@ function TemplateDownloadCanvas({
   return (
     <div
       id={`download-${templateId}`}
-      style={{
-        width: "1920px",
-        height: "1080px",
-        position: "relative",
-        // 明示的に標準的な色を指定してoklch()の継承を防ぐ
-        // html2canvas v1.4.1はoklch()をサポートしないため、
-        // すべてのCSS変数を標準的なrgba/hex値で上書き
-        color: "#000000",
-        backgroundColor: "#ffffff",
-        // @ts-ignore - CSS変数の型エラーを無視
-        "--foreground": "#252525",
-        "--card-foreground": "#252525",
-        "--popover": "#ffffff",
-        "--popover-foreground": "#252525",
-        "--primary-foreground": "#ffffff",
-        "--secondary": "#f2f2f3",
-        "--ring": "#b5b5b5",
-        "--chart-1": "#e89c4a",
-        "--chart-2": "#7dc6d1",
-        "--chart-3": "#5a6798",
-        "--chart-4": "#f5d97b",
-        "--chart-5": "#f1c469",
-      } as React.CSSProperties}
+      style={
+        {
+          width: "1920px",
+          height: "1080px",
+          position: "relative",
+          // 明示的に標準的な色を指定してoklch()の継承を防ぐ
+          // html2canvas v1.4.1はoklch()をサポートしないため、
+          // すべてのCSS変数を標準的なrgba/hex値で上書き
+          color: "#000000",
+          backgroundColor: "#ffffff",
+          // @ts-ignore - CSS変数の型エラーを無視
+          "--foreground": "#252525",
+          "--card-foreground": "#252525",
+          "--popover": "#ffffff",
+          "--popover-foreground": "#252525",
+          "--primary-foreground": "#ffffff",
+          "--secondary": "#f2f2f3",
+          "--ring": "#b5b5b5",
+          "--chart-1": "#e89c4a",
+          "--chart-2": "#7dc6d1",
+          "--chart-3": "#5a6798",
+          "--chart-4": "#f5d97b",
+          "--chart-5": "#f1c469",
+        } as React.CSSProperties
+      }
     >
       {/* Background image */}
       {templateData.imageUrl && (
@@ -982,12 +966,7 @@ function TemplatePreviewCanvas({
       console.error("Error rendering text fields:", error);
       return null;
     }
-  }, [
-    formData,
-    scale,
-    imageLoaded,
-    containerSize.width,
-  ]);
+  }, [formData, scale, imageLoaded, containerSize.width]);
 
   return (
     <div

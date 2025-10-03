@@ -3,9 +3,13 @@
  * html2canvasのCORS/tainted canvas問題を回避
  */
 
-import { FormData as AppFormData, TextLayerInfo, FrameLayoutInfo } from '../types';
+import {
+  FormData as AppFormData,
+  TextLayerInfo,
+  FrameLayoutInfo,
+} from "../types";
 
-export type ExportFormat = 'image/png' | 'image/jpeg' | 'image/webp';
+export type ExportFormat = "image/png" | "image/jpeg" | "image/webp";
 
 export interface TextLine {
   readonly text: string;
@@ -40,8 +44,8 @@ function loadImageCORS(url: string): Promise<HTMLImageElement> {
 
     // base64 data URLでもcrossOriginを設定（念のため）
     // CORS制限のあるURLでも動作するように
-    if (!url.startsWith('data:')) {
-      img.crossOrigin = 'anonymous';
+    if (!url.startsWith("data:")) {
+      img.crossOrigin = "anonymous";
     }
 
     const timeout = setTimeout(() => {
@@ -50,17 +54,21 @@ function loadImageCORS(url: string): Promise<HTMLImageElement> {
 
     img.onload = () => {
       clearTimeout(timeout);
-      console.log('[CanvasExport] ✓ Image loaded:', {
-        url: url.substring(0, 50) + '...',
+      console.log("[CanvasExport] ✓ Image loaded:", {
+        url: url.substring(0, 50) + "...",
         width: img.naturalWidth,
-        height: img.naturalHeight
+        height: img.naturalHeight,
       });
       resolve(img);
     };
 
     img.onerror = (e) => {
       clearTimeout(timeout);
-      console.error('[CanvasExport] ✗ Image load failed:', url.substring(0, 100), e);
+      console.error(
+        "[CanvasExport] ✗ Image load failed:",
+        url.substring(0, 100),
+        e,
+      );
       reject(new Error(`Image load failed: ${url.substring(0, 100)}`));
     };
 
@@ -73,12 +81,15 @@ function loadImageCORS(url: string): Promise<HTMLImageElement> {
  */
 async function ensureDecoded(img: HTMLImageElement): Promise<void> {
   // @ts-ignore - decode()は一部のブラウザでサポート
-  if (typeof img.decode === 'function') {
+  if (typeof img.decode === "function") {
     try {
       await img.decode();
-      console.log('[CanvasExport] ✓ Image decoded');
+      console.log("[CanvasExport] ✓ Image decoded");
     } catch (e) {
-      console.warn('[CanvasExport] ⚠ Image decode failed, continuing anyway:', e);
+      console.warn(
+        "[CanvasExport] ⚠ Image decode failed, continuing anyway:",
+        e,
+      );
     }
   }
 }
@@ -91,12 +102,12 @@ function applyTextShadow(ctx: CanvasRenderingContext2D, shadow?: string): void {
 
   // "0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(255, 255, 255, 0.6), ..."
   // 最初のシャドウのみを適用（Canvasは複数シャドウ非対応）
-  const parts = shadow.split(',')[0].trim().split(/\s+/);
+  const parts = shadow.split(",")[0].trim().split(/\s+/);
   if (parts.length >= 4) {
     ctx.shadowOffsetX = parseFloat(parts[0]) || 0;
     ctx.shadowOffsetY = parseFloat(parts[1]) || 0;
     ctx.shadowBlur = parseFloat(parts[2]) || 0;
-    ctx.shadowColor = parts.slice(3).join(' ');
+    ctx.shadowColor = parts.slice(3).join(" ");
   }
 }
 
@@ -104,31 +115,32 @@ function applyTextShadow(ctx: CanvasRenderingContext2D, shadow?: string): void {
  * Canvas直接描画でテンプレート画像を生成
  */
 export async function exportComposite(options: ExportOptions): Promise<Blob> {
-  const { width, height, backgroundUrl, textLines, mimeType, quality } = options;
+  const { width, height, backgroundUrl, textLines, mimeType, quality } =
+    options;
 
-  console.log('[CanvasExport] Starting export:', {
+  console.log("[CanvasExport] Starting export:", {
     width,
     height,
-    backgroundUrl: backgroundUrl.substring(0, 50) + '...',
+    backgroundUrl: backgroundUrl.substring(0, 50) + "...",
     textLinesCount: textLines.length,
-    mimeType
+    mimeType,
   });
 
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
-  const ctx = canvas.getContext('2d', { alpha: false }); // alpha=falseで高速化
+  const ctx = canvas.getContext("2d", { alpha: false }); // alpha=falseで高速化
 
   if (!ctx) {
-    throw new Error('Failed to get 2D context');
+    throw new Error("Failed to get 2D context");
   }
 
   // 1. 背景を白で塗る（JPEG黒化対策）
   ctx.save();
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, width, height);
   ctx.restore();
-  console.log('[CanvasExport] ✓ White background filled');
+  console.log("[CanvasExport] ✓ White background filled");
 
   // 2. 背景画像を読み込み＆描画
   try {
@@ -136,9 +148,9 @@ export async function exportComposite(options: ExportOptions): Promise<Blob> {
     await ensureDecoded(bg);
 
     ctx.drawImage(bg, 0, 0, width, height);
-    console.log('[CanvasExport] ✓ Background image drawn');
+    console.log("[CanvasExport] ✓ Background image drawn");
   } catch (error) {
-    console.error('[CanvasExport] ✗ Failed to draw background:', error);
+    console.error("[CanvasExport] ✗ Failed to draw background:", error);
     throw new Error(`Background image failed: ${error}`);
   }
 
@@ -154,7 +166,7 @@ export async function exportComposite(options: ExportOptions): Promise<Blob> {
 
     // letter-spacing対応（Canvas APIに直接のサポートなし、手動で調整）
     // 簡易実装：各文字を個別に描画
-    if (line.letterSpacing && line.letterSpacing !== 'normal') {
+    if (line.letterSpacing && line.letterSpacing !== "normal") {
       const spacing = parseFloat(line.letterSpacing) || 0;
       const spacingPx = spacing * line.fontSize; // emをpxに変換
 
@@ -183,22 +195,25 @@ export async function exportComposite(options: ExportOptions): Promise<Blob> {
           if (b) {
             resolve(b);
           } else {
-            reject(new Error('toBlob returned null'));
+            reject(new Error("toBlob returned null"));
           }
         },
         mimeType,
-        quality
+        quality,
       );
     });
 
-    console.log('[CanvasExport] ✓ Blob created:', {
+    console.log("[CanvasExport] ✓ Blob created:", {
       size: blob.size,
-      type: blob.type
+      type: blob.type,
     });
 
     return blob;
   } catch (error) {
-    console.error('[CanvasExport] ✗ toBlob failed (likely tainted canvas):', error);
+    console.error(
+      "[CanvasExport] ✗ toBlob failed (likely tainted canvas):",
+      error,
+    );
     throw new Error(`Canvas export failed: ${error}`);
   }
 }
@@ -210,7 +225,7 @@ export function buildTextLines(
   textLayers: Record<string, TextLayerInfo>,
   frames: Record<string, FrameLayoutInfo> | undefined,
   formData: AppFormData,
-  scale: number = 1
+  scale: number = 1,
 ): TextLine[] {
   const lines: TextLine[] = [];
 
@@ -218,18 +233,19 @@ export function buildTextLines(
   // 本来はrenderTextFields()のロジックを移植すべき
   Object.entries(textLayers).forEach(([fieldName, layer]) => {
     const value = formData[fieldName as keyof AppFormData];
-    if (!value || typeof value !== 'string' || value.trim() === '') return;
+    if (!value || typeof value !== "string" || value.trim() === "") return;
 
     // Convert to uppercase for English name fields
-    const displayValue = (fieldName === 'last_name_en' || fieldName === 'first_name_en')
-      ? value.toUpperCase()
-      : value;
+    const displayValue =
+      fieldName === "last_name_en" || fieldName === "first_name_en"
+        ? value.toUpperCase()
+        : value;
 
     // Get text color
-    let fillStyle = '#000000';
+    let fillStyle = "#000000";
     if (layer.fills && layer.fills.length > 0) {
       const fill = layer.fills[0];
-      if (fill.type === 'SOLID' && fill.color) {
+      if (fill.type === "SOLID" && fill.color) {
         const { r, g, b } = fill.color;
         const opacity = fill.opacity !== undefined ? fill.opacity : 1;
         fillStyle = `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${opacity})`;
@@ -237,16 +253,21 @@ export function buildTextLines(
     }
 
     // letter-spacing for name fields
-    const isNameField = fieldName.includes('name_jp') || fieldName.includes('name_en');
-    const letterSpacing = isNameField ? '0.1em' : 'normal';
+    const isNameField =
+      fieldName.includes("name_jp") || fieldName.includes("name_en");
+    const letterSpacing = isNameField ? "0.1em" : "normal";
 
     // text shadow for glow effect
-    const textShadow = '0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.4)';
+    const textShadow =
+      "0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.4)";
 
     // Determine text alignment
     const textAlign: CanvasTextAlign =
-      layer.textAlignHorizontal === 'RIGHT' ? 'right' :
-      layer.textAlignHorizontal === 'CENTER' ? 'center' : 'left';
+      layer.textAlignHorizontal === "RIGHT"
+        ? "right"
+        : layer.textAlignHorizontal === "CENTER"
+          ? "center"
+          : "left";
 
     lines.push({
       text: displayValue,
@@ -257,9 +278,9 @@ export function buildTextLines(
       fontFamily: '"Noto Sans JP", sans-serif',
       fillStyle,
       textAlign,
-      textBaseline: 'top',
+      textBaseline: "top",
       letterSpacing,
-      textShadow
+      textShadow,
     });
   });
 

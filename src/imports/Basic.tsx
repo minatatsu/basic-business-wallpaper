@@ -7,8 +7,17 @@ function Bg() {
       <div className="absolute bottom-[-1px] flex h-[674px] items-center justify-center right-[0.54px] w-[894.462px]">
         <div className="flex-none rotate-[180deg] scale-y-[-100%]">
           <div className="h-[674px] relative w-[894.462px]">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 895 674">
-              <path d={svgPaths.p155f8fe0} fill="var(--fill-0, #234C87)" id="Polygon 4" />
+            <svg
+              className="block size-full"
+              fill="none"
+              preserveAspectRatio="none"
+              viewBox="0 0 895 674"
+            >
+              <path
+                d={svgPaths.p155f8fe0}
+                fill="var(--fill-0, #234C87)"
+                id="Polygon 4"
+              />
             </svg>
           </div>
         </div>
@@ -16,9 +25,18 @@ function Bg() {
       <div className="absolute flex h-[686px] items-center justify-center right-0 top-0 w-[431.241px]">
         <div className="flex-none rotate-[180deg]">
           <div className="h-[686px] relative w-[431.241px]">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 432 686">
+            <svg
+              className="block size-full"
+              fill="none"
+              preserveAspectRatio="none"
+              viewBox="0 0 432 686"
+            >
               <g id="Polygon 3">
-                <path d={svgPaths.p39d23980} fill="var(--fill-0, #D0DFF4)" style={{ mixBlendMode: "multiply" }} />
+                <path
+                  d={svgPaths.p39d23980}
+                  fill="var(--fill-0, #D0DFF4)"
+                  style={{ mixBlendMode: "multiply" }}
+                />
               </g>
             </svg>
           </div>
@@ -30,12 +48,27 @@ function Bg() {
 
 function Qr() {
   return (
-    <div className="absolute h-[331px] right-[95px] top-[685px] w-[280px]" data-name="QR">
-      <div className="absolute left-0 pointer-events-none rounded-[10px] size-[280px] top-0" data-name="QR">
-        <img alt="" className="absolute inset-0 max-w-none object-50%-50% object-cover rounded-[10px] size-full" src={imgQr} />
-        <div aria-hidden="true" className="absolute border border-black border-solid inset-0 rounded-[10px]" />
+    <div
+      className="absolute h-[331px] right-[95px] top-[685px] w-[280px]"
+      data-name="QR"
+    >
+      <div
+        className="absolute left-0 pointer-events-none rounded-[10px] size-[280px] top-0"
+        data-name="QR"
+      >
+        <img
+          alt=""
+          className="absolute inset-0 max-w-none object-50%-50% object-cover rounded-[10px] size-full"
+          src={imgQr}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute border border-black border-solid inset-0 rounded-[10px]"
+        />
       </div>
-      <p className="absolute font-['Noto_Sans_JP:Regular',_sans-serif] font-normal leading-[normal] left-[140px] text-[32px] text-center text-white top-[290px] translate-x-[-50%] w-[280px]">basicinc.jp</p>
+      <p className="absolute font-['Noto_Sans_JP:Regular',_sans-serif] font-normal leading-[normal] left-[140px] text-[32px] text-center text-white top-[290px] translate-x-[-50%] w-[280px]">
+        basicinc.jp
+      </p>
     </div>
   );
 }
@@ -69,7 +102,10 @@ function Frame1() {
 
 function Name() {
   return (
-    <div className="content-stretch flex flex-col gap-[24px] h-[185px] items-start relative shrink-0" data-name="name">
+    <div
+      className="content-stretch flex flex-col gap-[24px] h-[185px] items-start relative shrink-0"
+      data-name="name"
+    >
       <Frame1 />
     </div>
   );
@@ -86,7 +122,10 @@ function Frame54269() {
 
 function Frame() {
   return (
-    <div className="content-stretch flex flex-col gap-[8px] items-end justify-center relative shrink-0" data-name="frame">
+    <div
+      className="content-stretch flex flex-col gap-[8px] items-end justify-center relative shrink-0"
+      data-name="frame"
+    >
       <Frame54269 />
       <p className="relative shrink-0">◯◯◯グループ</p>
     </div>
@@ -95,7 +134,10 @@ function Frame() {
 
 function Team() {
   return (
-    <div className="content-stretch flex flex-col font-['Noto_Sans_JP:Bold',_sans-serif] font-bold gap-[8px] items-end leading-[normal] relative shrink-0 text-[38px] text-neutral-900 text-nowrap whitespace-pre" data-name="team">
+    <div
+      className="content-stretch flex flex-col font-['Noto_Sans_JP:Bold',_sans-serif] font-bold gap-[8px] items-end leading-[normal] relative shrink-0 text-[38px] text-neutral-900 text-nowrap whitespace-pre"
+      data-name="team"
+    >
       <Frame />
       <p className="relative shrink-0 text-right">役職が入ります</p>
     </div>
@@ -104,7 +146,10 @@ function Team() {
 
 function Profile() {
   return (
-    <div className="content-stretch flex flex-col gap-[30px] items-end relative shrink-0 w-full" data-name="profile">
+    <div
+      className="content-stretch flex flex-col gap-[30px] items-end relative shrink-0 w-full"
+      data-name="profile"
+    >
       <Name />
       <Team />
     </div>
@@ -113,7 +158,10 @@ function Profile() {
 
 function Info() {
   return (
-    <div className="absolute box-border content-stretch flex flex-col gap-[36px] items-start right-[98px] shadow-[0px_0px_20px_0px_#ffffff,0px_0px_15px_0px_#ffffff] top-[135px]" data-name="info">
+    <div
+      className="absolute box-border content-stretch flex flex-col gap-[36px] items-start right-[98px] shadow-[0px_0px_20px_0px_#ffffff,0px_0px_15px_0px_#ffffff] top-[135px]"
+      data-name="info"
+    >
       <Profile />
     </div>
   );
@@ -125,8 +173,16 @@ export default function Basic() {
       <Bg />
       <Qr />
       <Info />
-      <div className="absolute h-[102px] left-[105px] top-[908px] w-[235px]" data-name="全社">
-        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 235 102">
+      <div
+        className="absolute h-[102px] left-[105px] top-[908px] w-[235px]"
+        data-name="全社"
+      >
+        <svg
+          className="block size-full"
+          fill="none"
+          preserveAspectRatio="none"
+          viewBox="0 0 235 102"
+        >
           <g id="å¨ç¤¾">
             <path d={svgPaths.p1a1f2e40} fill="var(--fill-0, #024287)" />
             <path d={svgPaths.p2be5d080} fill="var(--fill-0, #024287)" />

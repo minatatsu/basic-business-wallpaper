@@ -5,32 +5,63 @@ interface LoginProps {
 }
 
 export function Login({ onLogin }: LoginProps) {
+  const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simple password check using environment variable
-    const correctPassword = import.meta.env.VITE_AUTH_PASSWORD || "wallpaper2025";
+    // ID and password check
+    const correctId = import.meta.env.VITE_AUTH_ID || "basicinc";
+    const correctPassword =
+      import.meta.env.VITE_AUTH_PASSWORD || "wallpaper2025";
 
-    if (password === correctPassword) {
+    if (id === correctId && password === correctPassword) {
       sessionStorage.setItem("authenticated", "true");
       onLogin();
     } else {
       setError(true);
+      setId("");
       setPassword("");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">壁紙ジェネレーター</h1>
+      <div className="bg-white p-8 rounded-lg shadow-md w-96 flex flex-col items-center">
+        <h1
+          className="mb-8 text-center text-gray-900"
+          style={{ fontSize: "28px", fontWeight: "700" }}
+        >
+          MTG背景ジェネレーター
+        </h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              パスワード
+            <label
+              htmlFor="id"
+              className="block text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide"
+            >
+              ID
+            </label>
+            <input
+              type="text"
+              id="id"
+              value={id}
+              onChange={(e) => {
+                setId(e.target.value);
+                setError(false);
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoFocus
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="block text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide"
+            >
+              Password
             </label>
             <input
               type="password"
@@ -41,10 +72,11 @@ export function Login({ onLogin }: LoginProps) {
                 setError(false);
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              autoFocus
             />
             {error && (
-              <p className="mt-2 text-sm text-red-600">パスワードが正しくありません</p>
+              <p className="mt-2 text-sm text-red-600">
+                IDまたはパスワードが正しくありません
+              </p>
             )}
           </div>
           <button

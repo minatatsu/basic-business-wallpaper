@@ -16,12 +16,22 @@ function renderInfoFrame(
   templateData: TemplateDataType,
   formData: FormData,
   scale: number = 1,
-  isForDownload: boolean = false
+  isForDownload: boolean = false,
 ) {
-  const { last_name_jp, first_name_jp, last_name_en, first_name_en, department_1, department_2, group, role } = formData;
+  const {
+    last_name_jp,
+    first_name_jp,
+    last_name_en,
+    first_name_en,
+    department_1,
+    department_2,
+    group,
+    role,
+  } = formData;
 
   // 空チェック
-  const hasName = last_name_jp || first_name_jp || last_name_en || first_name_en;
+  const hasName =
+    last_name_jp || first_name_jp || last_name_en || first_name_en;
   const hasTeam = department_1 || department_2 || group || role;
   if (!hasName && !hasTeam) return null;
 
@@ -30,11 +40,12 @@ function renderInfoFrame(
       style={{
         position: "absolute",
         top: `${(isForDownload ? 80 : 100) * scale}px`,
-        right: `${98 * scale}px`,  // Figmaの位置
+        right: `${98 * scale}px`, // Figmaの位置
         display: "flex",
         flexDirection: "column",
         gap: `${36 * scale}px`,
-        textShadow: "0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.4)",
+        textShadow:
+          "0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.4)",
       }}
     >
       {/* Profile フレーム */}
@@ -60,7 +71,7 @@ function renderInfoFrame(
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: `${(isForDownload ? 40 : 24) * scale}px`,  // ダウンロード時は32px
+                gap: `${(isForDownload ? 40 : 24) * scale}px`, // ダウンロード時は32px
                 alignItems: "flex-end",
                 marginTop: `${(isForDownload ? -32 : 0) * scale}px`,
               }}

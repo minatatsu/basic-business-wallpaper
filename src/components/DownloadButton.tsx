@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Button } from './ui/button';
-import { Download, Loader2 } from 'lucide-react';
-import { FormData } from '../types';
-import { downloadMultipleImages } from '../utils/imageGenerator';
-import { toast } from 'sonner@2.0.3';
-import { Progress } from './ui/progress';
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Download, Loader2 } from "lucide-react";
+import { FormData } from "../types";
+import { downloadMultipleImages } from "../utils/imageGenerator";
+import { toast } from "sonner@2.0.3";
+import { Progress } from "./ui/progress";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from './ui/alert-dialog';
+} from "./ui/alert-dialog";
 
 interface DownloadButtonProps {
   formData: FormData;
@@ -28,8 +28,9 @@ export function DownloadButton({ formData, isValid }: DownloadButtonProps) {
 
   const handleDownload = async () => {
     if (!isValid) {
-      toast.error('入力内容を確認してください', {
-        description: '必須項目をすべて入力し、テンプレートを1つ以上選択してください。',
+      toast.error("入力内容を確認してください", {
+        description:
+          "必須項目をすべて入力し、テンプレートを1つ以上選択してください。",
       });
       return;
     }
@@ -53,16 +54,16 @@ export function DownloadButton({ formData, isValid }: DownloadButtonProps) {
         formData,
         (current, total) => {
           setProgress((current / total) * 100);
-        }
+        },
       );
 
-      toast.success('ダウンロード完了！', {
+      toast.success("ダウンロード完了！", {
         description: `${formData.selected_templates.length}個の背景画像をダウンロードしました。`,
       });
     } catch (error) {
-      console.error('Download error:', error);
-      toast.error('ダウンロードに失敗しました', {
-        description: 'もう一度お試しください。',
+      console.error("Download error:", error);
+      toast.error("ダウンロードに失敗しました", {
+        description: "もう一度お試しください。",
       });
     } finally {
       setIsGenerating(false);
@@ -88,11 +89,12 @@ export function DownloadButton({ formData, isValid }: DownloadButtonProps) {
             <>
               <Download className="mr-2 h-4 w-4" />
               ダウンロード
-              {formData.selected_templates.length > 1 && ` (${formData.selected_templates.length}個)`}
+              {formData.selected_templates.length > 1 &&
+                ` (${formData.selected_templates.length}個)`}
             </>
           )}
         </Button>
-        
+
         {isGenerating && (
           <div className="space-y-2">
             <Progress value={progress} />
@@ -114,7 +116,9 @@ export function DownloadButton({ formData, isValid }: DownloadButtonProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>キャンセル</AlertDialogCancel>
-            <AlertDialogAction onClick={executeDownload}>続ける</AlertDialogAction>
+            <AlertDialogAction onClick={executeDownload}>
+              続ける
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -1,5 +1,7 @@
 import { useState, useEffect, ReactNode } from "react";
 import { Login } from "./Login";
+import { LoadingScreen } from "./LoadingScreen";
+import { useLoading } from "../context/LoadingContext";
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -7,25 +9,30 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children }: AuthGuardProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const { isLoading } = useLoading();
 
   useEffect(() => {
     // Check if user is already authenticated
     const authStatus = sessionStorage.getItem("authenticated");
     setIsAuthenticated(authStatus === "true");
-    setIsLoading(false);
+    setIsCheckingAuth(false);
   }, []);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
 
-  if (isLoading) {
+  if (isCheckingAuth) {
     return null;
   }
 
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />;
+  }
+
+  if (isLoading) {
+    return <LoadingScreen message="テンプレートを読み込んでいます..." />;
   }
 
   return <>{children}</>;

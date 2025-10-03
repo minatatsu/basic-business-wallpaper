@@ -27,7 +27,10 @@ function Frame1() {
 
 function Name() {
   return (
-    <div className="content-stretch flex flex-col gap-[24px] h-[185px] items-start relative shrink-0" data-name="name">
+    <div
+      className="content-stretch flex flex-col gap-[24px] h-[185px] items-start relative shrink-0"
+      data-name="name"
+    >
       <Frame1 />
     </div>
   );
@@ -44,7 +47,10 @@ function Frame54265() {
 
 function Frame() {
   return (
-    <div className="content-stretch flex flex-col gap-[8px] items-end justify-center relative shrink-0" data-name="frame">
+    <div
+      className="content-stretch flex flex-col gap-[8px] items-end justify-center relative shrink-0"
+      data-name="frame"
+    >
       <Frame54265 />
       <p className="relative shrink-0">◯◯◯グループ</p>
     </div>
@@ -53,7 +59,10 @@ function Frame() {
 
 function Team() {
   return (
-    <div className="content-stretch flex flex-col font-['Noto_Sans_JP:Bold',_sans-serif] font-bold gap-[8px] items-end leading-[normal] relative shrink-0 text-[38px] text-neutral-900 text-nowrap whitespace-pre" data-name="team">
+    <div
+      className="content-stretch flex flex-col font-['Noto_Sans_JP:Bold',_sans-serif] font-bold gap-[8px] items-end leading-[normal] relative shrink-0 text-[38px] text-neutral-900 text-nowrap whitespace-pre"
+      data-name="team"
+    >
       <Frame />
       <p className="relative shrink-0 text-right">役職が入ります</p>
     </div>
@@ -62,7 +71,10 @@ function Team() {
 
 function Profile() {
   return (
-    <div className="content-stretch flex flex-col gap-[30px] items-end relative shrink-0 w-full" data-name="profile">
+    <div
+      className="content-stretch flex flex-col gap-[30px] items-end relative shrink-0 w-full"
+      data-name="profile"
+    >
       <Name />
       <Team />
     </div>
@@ -71,7 +83,10 @@ function Profile() {
 
 export default function Info() {
   return (
-    <div className="box-border content-stretch flex flex-col gap-[36px] items-start relative shadow-[0px_0px_20px_0px_#ffffff,0px_0px_15px_0px_#ffffff] size-full" data-name="info">
+    <div
+      className="box-border content-stretch flex flex-col gap-[36px] items-start relative shadow-[0px_0px_20px_0px_#ffffff,0px_0px_15px_0px_#ffffff] size-full"
+      data-name="info"
+    >
       <Profile />
     </div>
   );

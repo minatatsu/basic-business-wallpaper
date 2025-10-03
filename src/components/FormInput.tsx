@@ -1,5 +1,5 @@
-import { Input } from './ui/input';
-import { Label } from './ui/label';
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 interface FormInputProps {
   label: string;
@@ -35,12 +35,10 @@ export function FormInput({
         required={required}
         pattern={pattern}
         maxLength={maxLength}
-        className={error ? 'border-destructive' : ''}
+        className={error ? "border-destructive" : ""}
         aria-label={label}
       />
-      {error && (
-        <p className="text-sm text-destructive">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );
 }

@@ -1,13 +1,16 @@
-import { TEMPLATES } from '../types';
-import { TemplateCard } from './TemplateCard';
-import { useFigmaImages } from '../hooks/useFigmaImages';
+import { TEMPLATES } from "../types";
+import { TemplateCard } from "./TemplateCard";
+import { useFigmaImages } from "../hooks/useFigmaImages";
 
 interface TemplateSelectorProps {
   selectedTemplates: string[];
   onToggle: (templateId: string) => void;
 }
 
-export function TemplateSelector({ selectedTemplates, onToggle }: TemplateSelectorProps) {
+export function TemplateSelector({
+  selectedTemplates,
+  onToggle,
+}: TemplateSelectorProps) {
   const { templateData } = useFigmaImages();
 
   return (
@@ -16,7 +19,8 @@ export function TemplateSelector({ selectedTemplates, onToggle }: TemplateSelect
         <h3 className="mb-2">テンプレート選択</h3>
         <p className="text-sm text-muted-foreground">
           1つ以上のテンプレートを選択してください
-          {selectedTemplates.length > 0 && ` (${selectedTemplates.length}個選択中)`}
+          {selectedTemplates.length > 0 &&
+            ` (${selectedTemplates.length}個選択中)`}
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
