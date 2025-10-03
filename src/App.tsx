@@ -64,7 +64,7 @@ export default function App() {
         </header>
 
         {/* Main Content */}
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-8 pb-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Form */}
             <div className="space-y-8">
@@ -91,10 +91,6 @@ export default function App() {
                     />
                   </div>
                 </ScrollArea>
-              </Card>
-
-              <Card className="p-6">
-                <DownloadButton formData={formData} isValid={isValid()} />
               </Card>
             </div>
 
@@ -185,6 +181,18 @@ export default function App() {
           </AlertDialogContent>
         </AlertDialog>
       </div>
+
+      {/* Fixed Footer with Download Button */}
+      <footer
+        className="fixed left-0 right-0 border-t bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 z-50"
+        style={{ bottom: 0 }}
+      >
+        <div className="container mx-auto px-4 py-4">
+          <div className="max-w-md mx-auto">
+            <DownloadButton formData={formData} isValid={isValid()} />
+          </div>
+        </div>
+      </footer>
     </AuthGuard>
   );
 }

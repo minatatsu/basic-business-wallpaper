@@ -290,6 +290,7 @@ export function BackgroundPreview({
             className="grid w-full"
             style={{
               gridTemplateColumns: `repeat(${selectedTemplates.length}, 1fr)`,
+              height: "56px",
             }}
           >
             {selectedTemplates.map((template) => (
