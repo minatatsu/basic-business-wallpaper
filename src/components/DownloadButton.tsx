@@ -77,7 +77,7 @@ export function DownloadButton({ formData, isValid }: DownloadButtonProps) {
         <Button
           onClick={handleDownload}
           disabled={!isValid || isGenerating}
-          className="w-full"
+          className="w-full cursor-pointer hover:opacity-90 transition-opacity"
           size="lg"
         >
           {isGenerating ? (
