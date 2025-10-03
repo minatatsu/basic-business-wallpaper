@@ -7,6 +7,8 @@ export interface FormData {
   department_2: string;
   group: string[];
   role: string;
+  affiliation_mode: "basic" | "custom";
+  custom_affiliation: string;
   selected_templates: string[];
 }
 
