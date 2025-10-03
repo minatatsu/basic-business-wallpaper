@@ -27,8 +27,6 @@ function renderInfoFrame(
     department_2,
     group,
     role,
-    affiliation_mode,
-    custom_affiliation,
   } = formData;
 
   // 空チェック
@@ -37,10 +35,7 @@ function renderInfoFrame(
   const groupText = Array.isArray(group)
     ? group.filter((g) => g.trim() !== "").join(" / ")
     : group;
-  const hasTeam =
-    affiliation_mode === "custom"
-      ? custom_affiliation.trim() !== ""
-      : department_1 || department_2 || groupText || role;
+  const hasTeam = department_1 || department_2 || groupText || role;
   if (!hasName && !hasTeam) return null;
 
   return (
@@ -149,50 +144,36 @@ function renderInfoFrame(
               whiteSpace: "nowrap",
             }}
           >
-            {affiliation_mode === "custom" ? (
-              // カスタム入力モード
-              <>
-                {custom_affiliation.split("\n").map((line, index) => (
-                  <div key={index} style={{ textAlign: "right" }}>
-                    {line || "\u00A0"}
-                  </div>
-                ))}
-              </>
-            ) : (
-              // 基本入力モード
-              <>
-                {/* Frame (小文字のフレーム) */}
+            {/* Frame (小文字のフレーム) */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: `${8 * scale}px`,
+                alignItems: "flex-end",
+                justifyContent: "center",
+              }}
+            >
+              {/* Frame 54269 - 部門 */}
+              {(department_1 || department_2) && (
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
                     gap: `${8 * scale}px`,
-                    alignItems: "flex-end",
-                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  {/* Frame 54269 - 部門 */}
-                  {(department_1 || department_2) && (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: `${8 * scale}px`,
-                        alignItems: "center",
-                      }}
-                    >
-                      {department_1 && <div>{department_1}</div>}
-                      {department_2 && <div>{department_2}</div>}
-                    </div>
-                  )}
-
-                  {/* グループ */}
-                  {groupText && <div>{groupText}</div>}
+                  {department_1 && <div>{department_1}</div>}
+                  {department_2 && <div>{department_2}</div>}
                 </div>
+              )}
 
-                {/* 役職 */}
-                {role && <div style={{ textAlign: "right" }}>{role}</div>}
-              </>
-            )}
+              {/* グループ */}
+              {groupText && <div>{groupText}</div>}
+            </div>
+
+            {/* 役職 */}
+            {role && <div style={{ textAlign: "right" }}>{role}</div>}
           </div>
         )}
       </div>
