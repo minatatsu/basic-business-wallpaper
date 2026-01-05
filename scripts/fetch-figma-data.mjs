@@ -17,6 +17,19 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// .envファイルを読み込む
+const envPath = path.join(__dirname, '..', '.env');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf-8');
+  envContent.split('\n').forEach(line => {
+    const [key, ...valueParts] = line.split('=');
+    if (key && valueParts.length > 0) {
+      process.env[key.trim()] = valueParts.join('=').trim();
+    }
+  });
+  console.log('[Setup] Loaded .env file');
+}
+
 // Figma設定
 const FIGMA_CONFIG = {
   fileKey: "Tz8aQ9p4SrqCtVT4UEeNa1",
