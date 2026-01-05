@@ -1,0 +1,51 @@
+{
+  "basic": {
+    "nodeId": "41-6091",
+    "imageFile": "basic.png",
+    "dataFile": "basic.json",
+    "width": 1920,
+    "height": 1080
+  },
+  "oudan": {
+    "nodeId": "58-6635",
+    "imageFile": "oudan.png",
+    "dataFile": "oudan.json",
+    "width": 1920,
+    "height": 1080
+  },
+  "run": {
+    "nodeId": "95-818",
+    "imageFile": "run.png",
+    "dataFile": "run.json",
+    "width": 1920,
+    "height": 1080
+  },
+  "ferretall": {
+    "nodeId": "439-5172",
+    "imageFile": "ferretall.png",
+    "dataFile": "ferretall.json",
+    "width": 1920,
+    "height": 1080
+  },
+  "ferretone": {
+    "nodeId": "95-878",
+    "imageFile": "ferretone.png",
+    "dataFile": "ferretone.json",
+    "width": 1920,
+    "height": 1080
+  },
+  "ferretSOL": {
+    "nodeId": "95-933",
+    "imageFile": "ferretSOL.png",
+    "dataFile": "ferretSOL.json",
+    "width": 1920,
+    "height": 1080
+  },
+  "ferretMedia": {
+    "nodeId": "95-997",
+    "imageFile": "ferretMedia.png",
+    "dataFile": "ferretMedia.json",
+    "width": 1920,
+    "height": 1080
+  }
+}

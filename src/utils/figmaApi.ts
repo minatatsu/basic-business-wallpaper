@@ -1,197 +1,194 @@
-import { projectId, publicAnonKey } from "./supabase/info";
-import { FIGMA_CONFIG } from "../types";
+import { FIGMA_CONFIG, TEMPLATES } from "../types";
 
-const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-b35d308f`;
+// ローカルテンプレートデータの基本パス
+const TEMPLATE_BASE_PATH = "/templates";
 
-// Helper to wrap Figma S3 URLs with our proxy to bypass CORS
-export function wrapImageUrl(figmaUrl: string): string {
-  if (!figmaUrl) return figmaUrl;
-  return `${API_BASE}/image-proxy?url=${encodeURIComponent(figmaUrl)}`;
+// テンプレートインデックスの型定義
+interface TemplateIndexEntry {
+  nodeId: string;
+  imageFile: string;
+  dataFile: string;
+  width: number;
+  height: number;
 }
 
-async function fetchWithRetry<T>(
-  fetcher: () => Promise<T>,
-  maxRetries: number = 3,
-  baseDelay: number = 1000,
-): Promise<T> {
-  let lastError: Error | null = null;
+// キャッシュ
+let templateIndexCache: Record<string, TemplateIndexEntry> | null = null;
+const templateDataCache: Record<string, any> = {};
+const imageDataCache: Record<string, string> = {};
 
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await fetcher();
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
-
-      if (i < maxRetries - 1) {
-        const delay = baseDelay * Math.pow(2, i);
-        console.log(`Retry ${i + 1}/${maxRetries - 1} after ${delay}ms...`);
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-    }
+/**
+ * テンプレートインデックスを取得
+ */
+async function loadTemplateIndex(): Promise<Record<string, TemplateIndexEntry>> {
+  if (templateIndexCache) {
+    return templateIndexCache;
   }
 
-  throw lastError;
+  const response = await fetch(`${TEMPLATE_BASE_PATH}/index.json`);
+  if (!response.ok) {
+    throw new Error(`Failed to load template index: ${response.status}`);
+  }
+
+  templateIndexCache = await response.json();
+  return templateIndexCache!;
 }
 
+/**
+ * テンプレートIDからnodeIdを取得するマッピング
+ */
+function getTemplateIdByNodeId(nodeId: string): string | null {
+  const normalizedNodeId = nodeId.replace(":", "-");
+  const template = TEMPLATES.find(t => t.nodeId === normalizedNodeId);
+  return template?.id || null;
+}
+
+/**
+ * 画像をBase64形式で取得（ローカルから）
+ */
 export async function fetchFigmaImageUrls(
   nodeIds: string[],
 ): Promise<Record<string, string>> {
-  return fetchWithRetry(async () => {
-    const url = `${API_BASE}/figma/images?fileKey=${FIGMA_CONFIG.fileKey}&nodeIds=${nodeIds.join(",")}&format=base64`;
-    console.log(`[FigmaAPI] Fetching images for ${nodeIds.length} nodes...`);
-    console.log(`[FigmaAPI] URL: ${url}`);
+  console.log(`[FigmaAPI] Loading local images for ${nodeIds.length} nodes...`);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+  const index = await loadTemplateIndex();
+  const result: Record<string, string> = {};
+
+  for (const nodeId of nodeIds) {
+    const normalizedNodeId = nodeId.replace(":", "-");
+    const templateId = getTemplateIdByNodeId(normalizedNodeId);
+
+    if (!templateId) {
+      console.warn(`[FigmaAPI] Unknown template for nodeId: ${nodeId}`);
+      continue;
+    }
+
+    const entry = index[templateId];
+    if (!entry) {
+      console.warn(`[FigmaAPI] No index entry for template: ${templateId}`);
+      continue;
+    }
+
+    // キャッシュチェック
+    if (imageDataCache[nodeId]) {
+      result[nodeId] = imageDataCache[nodeId];
+      continue;
+    }
 
     try {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${publicAnonKey}`,
-        },
-        signal: controller.signal,
+      const imagePath = `${TEMPLATE_BASE_PATH}/${entry.imageFile}`;
+      console.log(`[FigmaAPI] Loading image: ${imagePath}`);
+
+      const response = await fetch(imagePath);
+      if (!response.ok) {
+        console.error(`[FigmaAPI] Failed to load image for ${templateId}: ${response.status}`);
+        continue;
+      }
+
+      const blob = await response.blob();
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
       });
 
-      clearTimeout(timeoutId);
-      console.log(`[FigmaAPI] Response status: ${response.status}`);
-
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("[FigmaAPI] Error response:", error);
-        throw new Error(
-          `Failed to fetch Figma images: ${error.error || response.statusText}`,
-        );
-      }
-
-      const data = await response.json();
-      console.log(
-        "[FigmaAPI] ✓ Successfully fetched Figma images:",
-        Object.keys(data.images || {}).length,
-        "images",
-      );
-
-      // Check if images are base64 data URLs or raw S3 URLs
-      const images = data.images || {};
-      const firstImageUrl = Object.values(images)[0] as string | undefined;
-
-      if (firstImageUrl && firstImageUrl.startsWith("data:")) {
-        console.log("[FigmaAPI] Images are already base64 data URLs");
-        return images;
-      } else {
-        console.log(
-          "[FigmaAPI] ⚠ Edge Function returned raw URLs, converting to base64 on client...",
-        );
-
-        // Convert S3 URLs to base64 on client side
-        const base64Images: Record<string, string> = {};
-
-        for (const [nodeId, imageUrl] of Object.entries(images)) {
-          if (typeof imageUrl !== "string") continue;
-
-          try {
-            console.log(`[FigmaAPI] Converting ${nodeId} to base64...`);
-            const imgResponse = await fetch(imageUrl);
-
-            if (!imgResponse.ok) {
-              console.error(
-                `[FigmaAPI] Failed to fetch image for ${nodeId}: ${imgResponse.status}`,
-              );
-              continue;
-            }
-
-            const blob = await imgResponse.blob();
-            const base64 = await new Promise<string>((resolve) => {
-              const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result as string);
-              reader.readAsDataURL(blob);
-            });
-
-            base64Images[nodeId] = base64;
-            console.log(`[FigmaAPI] ✓ Converted ${nodeId} to base64`);
-          } catch (err) {
-            console.error(
-              `[FigmaAPI] Error converting ${nodeId} to base64:`,
-              err,
-            );
-          }
-        }
-
-        console.log(
-          `[FigmaAPI] ✓ Converted ${Object.keys(base64Images).length} images to base64`,
-        );
-        return base64Images;
-      }
+      imageDataCache[nodeId] = base64;
+      result[nodeId] = base64;
+      console.log(`[FigmaAPI] ✓ Loaded ${templateId} image`);
     } catch (error) {
-      clearTimeout(timeoutId);
-      if (error instanceof Error && error.name === "AbortError") {
-        console.error("[FigmaAPI] Request timed out");
-        throw new Error(
-          "Request timed out - Figma API is taking too long to respond",
-        );
-      }
-      console.error("[FigmaAPI] Fetch error:", error);
-      throw error;
+      console.error(`[FigmaAPI] Error loading image for ${templateId}:`, error);
     }
-  }, 2);
+  }
+
+  console.log(`[FigmaAPI] ✓ Loaded ${Object.keys(result).length} images`);
+  return result;
 }
 
+/**
+ * ノードデータを取得（ローカルから）
+ */
 export async function fetchFigmaNodes(nodeIds: string[]): Promise<any> {
-  return fetchWithRetry(async () => {
-    const url = `${API_BASE}/figma/nodes?fileKey=${FIGMA_CONFIG.fileKey}&nodeIds=${nodeIds.join(",")}`;
-    console.log(`[FigmaAPI] Fetching nodes for ${nodeIds.length} nodes...`);
-    console.log(`[FigmaAPI] URL: ${url}`);
+  console.log(`[FigmaAPI] Loading local node data for ${nodeIds.length} nodes...`);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+  const index = await loadTemplateIndex();
+  const result: Record<string, any> = {};
+
+  for (const nodeId of nodeIds) {
+    const normalizedNodeId = nodeId.replace(":", "-");
+    const templateId = getTemplateIdByNodeId(normalizedNodeId);
+
+    if (!templateId) {
+      console.warn(`[FigmaAPI] Unknown template for nodeId: ${nodeId}`);
+      continue;
+    }
+
+    const entry = index[templateId];
+    if (!entry) {
+      console.warn(`[FigmaAPI] No index entry for template: ${templateId}`);
+      continue;
+    }
+
+    // キャッシュチェック
+    if (templateDataCache[nodeId]) {
+      result[nodeId] = templateDataCache[nodeId];
+      continue;
+    }
 
     try {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${publicAnonKey}`,
-        },
-        signal: controller.signal,
-      });
+      const dataPath = `${TEMPLATE_BASE_PATH}/${entry.dataFile}`;
+      console.log(`[FigmaAPI] Loading data: ${dataPath}`);
 
-      clearTimeout(timeoutId);
-      console.log(`[FigmaAPI] Response status: ${response.status}`);
-
+      const response = await fetch(dataPath);
       if (!response.ok) {
-        const error = await response.json();
-        console.error("[FigmaAPI] Error response:", error);
-        throw new Error(
-          `Failed to fetch Figma nodes: ${error.error || response.statusText}`,
-        );
+        console.error(`[FigmaAPI] Failed to load data for ${templateId}: ${response.status}`);
+        continue;
       }
 
       const data = await response.json();
-      console.log(
-        "[FigmaAPI] ✓ Successfully fetched Figma nodes:",
-        Object.keys(data.nodes || {}).length,
-        "nodes",
-      );
-      return data.nodes || {};
+
+      // ローカルデータはすでに処理済みなので、document構造をラップ
+      const wrappedData = {
+        document: {
+          absoluteBoundingBox: {
+            x: 0,
+            y: 0,
+            width: data.width,
+            height: data.height
+          },
+          // テキストレイヤーとフレームを子要素として構造化
+          children: [],
+          // 直接データを渡すためのカスタムフィールド
+          _processedData: data
+        }
+      };
+
+      templateDataCache[nodeId] = wrappedData;
+      result[nodeId] = wrappedData;
+      console.log(`[FigmaAPI] ✓ Loaded ${templateId} data`);
     } catch (error) {
-      clearTimeout(timeoutId);
-      if (error instanceof Error && error.name === "AbortError") {
-        console.error("[FigmaAPI] Request timed out");
-        throw new Error(
-          "Request timed out - Figma API is taking too long to respond",
-        );
-      }
-      console.error("[FigmaAPI] Fetch error:", error);
-      throw error;
+      console.error(`[FigmaAPI] Error loading data for ${templateId}:`, error);
     }
-  }, 2);
+  }
+
+  console.log(`[FigmaAPI] ✓ Loaded ${Object.keys(result).length} nodes`);
+  return result;
 }
 
-// Helper to find text layers and frames in a node tree
+/**
+ * テキストレイヤーを検出（ローカルデータから）
+ */
 export function findTextLayers(node: any, prefix = "#"): Record<string, any> {
+  // ローカルデータの場合、すでに処理済みのデータがある
+  if (node._processedData?.textLayers) {
+    return node._processedData.textLayers;
+  }
+
+  // フォールバック：従来の走査ロジック
   const textLayers: Record<string, any> = {};
 
   function traverse(n: any, parent: any = null) {
     if (!n) return;
 
-    // Check if this is a text node with a name starting with prefix
     if (n.type === "TEXT" && n.name?.startsWith(prefix)) {
       const fieldName = n.name.substring(prefix.length);
       textLayers[fieldName] = {
@@ -200,12 +197,11 @@ export function findTextLayers(node: any, prefix = "#"): Record<string, any> {
         layoutAlign: n.layoutAlign,
         layoutPositioning: n.layoutPositioning,
         constraints: n.constraints,
-        effects: n.effects, // Include effects (drop shadows, etc.)
+        effects: n.effects,
         parentId: parent?.id,
       };
     }
 
-    // Traverse children
     if (n.children) {
       n.children.forEach((child: any) => traverse(child, n));
     }
@@ -215,11 +211,19 @@ export function findTextLayers(node: any, prefix = "#"): Record<string, any> {
   return textLayers;
 }
 
-// Helper to find frames with auto-layout (including nested frames)
+/**
+ * 自動レイアウトフレームを検出（ローカルデータから）
+ */
 export function findAutoLayoutFrames(
   node: any,
   textLayerIds: Set<string>,
 ): Record<string, any> {
+  // ローカルデータの場合、すでに処理済みのデータがある
+  if (node._processedData?.frames) {
+    return node._processedData.frames;
+  }
+
+  // フォールバック：従来の走査ロジック
   const frames: Record<string, any> = {};
 
   function hasTextLayerDescendant(n: any): boolean {
@@ -234,7 +238,6 @@ export function findAutoLayoutFrames(
   function traverse(n: any) {
     if (!n) return;
 
-    // Check if this is a frame with layout mode
     if (
       (n.type === "FRAME" || n.type === "GROUP") &&
       n.layoutMode &&
@@ -246,7 +249,6 @@ export function findAutoLayoutFrames(
         const childIds: string[] = [];
         const childFrameIds: string[] = [];
 
-        // Collect direct children: both text layers and frames
         n.children?.forEach((child: any) => {
           if (child.type === "TEXT" && child.name?.startsWith("#")) {
             childIds.push(child.id);
@@ -261,7 +263,6 @@ export function findAutoLayoutFrames(
           }
         });
 
-        // Store frame with both text children and child frames
         frames[n.id] = {
           id: n.id,
           name: n.name,
@@ -280,15 +281,14 @@ export function findAutoLayoutFrames(
           layoutAlign: n.layoutAlign,
           layoutGrow: n.layoutGrow,
           constraints: n.constraints,
-          effects: n.effects, // Include effects (drop shadows, etc.)
-          fills: n.fills, // Include background fills
+          effects: n.effects,
+          fills: n.fills,
           children: childIds,
           childFrames: childFrameIds,
         };
       }
     }
 
-    // Traverse children
     if (n.children) {
       n.children.forEach((child: any) => traverse(child));
     }
@@ -296,4 +296,10 @@ export function findAutoLayoutFrames(
 
   traverse(node);
   return frames;
+}
+
+// 後方互換性のためにエクスポート（使用されていない場合でも）
+export function wrapImageUrl(figmaUrl: string): string {
+  // ローカルモードでは不要だが、インターフェース互換性のため残す
+  return figmaUrl;
 }

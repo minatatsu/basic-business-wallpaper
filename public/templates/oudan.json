@@ -1,0 +1,532 @@
+{
+  "textLayers": {
+    "last_name_jp": {
+      "id": "107:6670",
+      "name": "#last_name_jp",
+      "x": 1190,
+      "y": 135,
+      "width": 284,
+      "height": 99,
+      "fontSize": 135,
+      "fontWeight": 900,
+      "fontFamily": "Noto Sans JP",
+      "textAlignHorizontal": "LEFT",
+      "textAlignVertical": "TOP",
+      "fills": [
+        {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+            "r": 0.09198467433452606,
+            "g": 0.09198467433452606,
+            "b": 0.09198467433452606,
+            "a": 1
+          }
+        }
+      ],
+      "lineHeight": 162,
+      "effects": [],
+      "layoutGrow": 0,
+      "layoutAlign": "INHERIT",
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "parentId": "107:6669"
+    },
+    "first_name_jp": {
+      "id": "107:6671",
+      "name": "#first_name_jp",
+      "x": 1538,
+      "y": 135,
+      "width": 284,
+      "height": 99,
+      "fontSize": 135,
+      "fontWeight": 900,
+      "fontFamily": "Noto Sans JP",
+      "textAlignHorizontal": "LEFT",
+      "textAlignVertical": "TOP",
+      "fills": [
+        {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+            "r": 0.09198467433452606,
+            "g": 0.09198467433452606,
+            "b": 0.09198467433452606,
+            "a": 1
+          }
+        }
+      ],
+      "lineHeight": 162,
+      "effects": [],
+      "layoutGrow": 0,
+      "layoutAlign": "INHERIT",
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "parentId": "107:6669"
+    },
+    "last_name_en": {
+      "id": "107:6673",
+      "name": "#last_name_en",
+      "x": 1374,
+      "y": 258,
+      "width": 239,
+      "height": 65,
+      "fontSize": 54,
+      "fontWeight": 700,
+      "fontFamily": "Noto Sans JP",
+      "textAlignHorizontal": "RIGHT",
+      "textAlignVertical": "TOP",
+      "fills": [
+        {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+            "r": 0.09198467433452606,
+            "g": 0.09198467433452606,
+            "b": 0.09198467433452606,
+            "a": 1
+          }
+        }
+      ],
+      "lineHeight": 64.80000305175781,
+      "effects": [],
+      "layoutGrow": 0,
+      "layoutAlign": "INHERIT",
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "parentId": "107:6672"
+    },
+    "first_name_en": {
+      "id": "107:6674",
+      "name": "#first_name_en",
+      "x": 1661,
+      "y": 258,
+      "width": 161,
+      "height": 65,
+      "fontSize": 54,
+      "fontWeight": 700,
+      "fontFamily": "Noto Sans JP",
+      "textAlignHorizontal": "RIGHT",
+      "textAlignVertical": "TOP",
+      "fills": [
+        {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+            "r": 0.09198467433452606,
+            "g": 0.09198467433452606,
+            "b": 0.09198467433452606,
+            "a": 1
+          }
+        }
+      ],
+      "lineHeight": 64.80000305175781,
+      "effects": [],
+      "layoutGrow": 0,
+      "layoutAlign": "INHERIT",
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "parentId": "107:6672"
+    },
+    "department_1": {
+      "id": "107:6677",
+      "name": "#department_1",
+      "x": 1510,
+      "y": 350,
+      "width": 152,
+      "height": 46,
+      "fontSize": 38,
+      "fontWeight": 700,
+      "fontFamily": "Noto Sans JP",
+      "textAlignHorizontal": "LEFT",
+      "textAlignVertical": "TOP",
+      "fills": [
+        {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+            "r": 0.09198467433452606,
+            "g": 0.09198467433452606,
+            "b": 0.09198467433452606,
+            "a": 1
+          }
+        }
+      ],
+      "lineHeight": 45.60000228881836,
+      "effects": [],
+      "layoutGrow": 0,
+      "layoutAlign": "INHERIT",
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "parentId": "142:21652"
+    },
+    "department_2": {
+      "id": "107:6678",
+      "name": "#department_2",
+      "x": 1670,
+      "y": 350,
+      "width": 152,
+      "height": 46,
+      "fontSize": 38,
+      "fontWeight": 700,
+      "fontFamily": "Noto Sans JP",
+      "textAlignHorizontal": "LEFT",
+      "textAlignVertical": "TOP",
+      "fills": [
+        {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+            "r": 0.09198467433452606,
+            "g": 0.09198467433452606,
+            "b": 0.09198467433452606,
+            "a": 1
+          }
+        }
+      ],
+      "lineHeight": 45.60000228881836,
+      "effects": [],
+      "layoutGrow": 0,
+      "layoutAlign": "INHERIT",
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "parentId": "142:21652"
+    },
+    "group": {
+      "id": "107:6679",
+      "name": "#group",
+      "x": 1558,
+      "y": 404,
+      "width": 264,
+      "height": 46,
+      "fontSize": 38,
+      "fontWeight": 700,
+      "fontFamily": "Noto Sans JP",
+      "textAlignHorizontal": "LEFT",
+      "textAlignVertical": "TOP",
+      "fills": [
+        {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+            "r": 0.09198467433452606,
+            "g": 0.09198467433452606,
+            "b": 0.09198467433452606,
+            "a": 1
+          }
+        }
+      ],
+      "lineHeight": 45.60000228881836,
+      "effects": [],
+      "layoutGrow": 0,
+      "layoutAlign": "INHERIT",
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "parentId": "107:6676"
+    },
+    "role": {
+      "id": "107:6680",
+      "name": "#role",
+      "x": 1556,
+      "y": 458,
+      "width": 266,
+      "height": 46,
+      "fontSize": 38,
+      "fontWeight": 700,
+      "fontFamily": "Noto Sans JP",
+      "textAlignHorizontal": "RIGHT",
+      "textAlignVertical": "TOP",
+      "fills": [
+        {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+            "r": 0.09198467433452606,
+            "g": 0.09198467433452606,
+            "b": 0.09198467433452606,
+            "a": 1
+          }
+        }
+      ],
+      "lineHeight": 45.60000228881836,
+      "effects": [],
+      "layoutGrow": 0,
+      "layoutAlign": "INHERIT",
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "parentId": "107:6675"
+    }
+  },
+  "frames": {
+    "107:6665": {
+      "id": "107:6665",
+      "name": "info",
+      "x": 1190,
+      "y": 135,
+      "width": 632,
+      "height": 369,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 36,
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "RIGHT"
+      },
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "color": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "blendMode": "NORMAL",
+          "offset": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 15,
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "color": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "blendMode": "NORMAL",
+          "offset": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 20,
+          "showShadowBehindNode": false
+        }
+      ],
+      "fills": [],
+      "children": [],
+      "childFrames": [
+        "107:6666"
+      ]
+    },
+    "107:6666": {
+      "id": "107:6666",
+      "name": "profile",
+      "x": 1190,
+      "y": 135,
+      "width": 632,
+      "height": 369,
+      "layoutMode": "VERTICAL",
+      "counterAxisAlignItems": "MAX",
+      "counterAxisSizingMode": "FIXED",
+      "itemSpacing": 30,
+      "layoutAlign": "STRETCH",
+      "layoutGrow": 0,
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "effects": [],
+      "fills": [],
+      "children": [],
+      "childFrames": [
+        "107:6667",
+        "107:6675"
+      ]
+    },
+    "107:6667": {
+      "id": "107:6667",
+      "name": "name",
+      "x": 1190,
+      "y": 135,
+      "width": 632,
+      "height": 185,
+      "layoutMode": "VERTICAL",
+      "primaryAxisSizingMode": "FIXED",
+      "itemSpacing": 24,
+      "layoutAlign": "INHERIT",
+      "layoutGrow": 0,
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "effects": [],
+      "fills": [],
+      "children": [],
+      "childFrames": [
+        "107:6668"
+      ]
+    },
+    "107:6668": {
+      "id": "107:6668",
+      "name": "Frame 1",
+      "x": 1190,
+      "y": 135,
+      "width": 632,
+      "height": 188,
+      "layoutMode": "VERTICAL",
+      "counterAxisAlignItems": "MAX",
+      "itemSpacing": 24,
+      "layoutAlign": "INHERIT",
+      "layoutGrow": 0,
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "effects": [],
+      "fills": [],
+      "children": [],
+      "childFrames": [
+        "107:6669",
+        "107:6672"
+      ]
+    },
+    "107:6669": {
+      "id": "107:6669",
+      "name": "Frame 54262",
+      "x": 1190,
+      "y": 135,
+      "width": 632,
+      "height": 99,
+      "layoutMode": "HORIZONTAL",
+      "primaryAxisAlignItems": "MAX",
+      "counterAxisAlignItems": "CENTER",
+      "itemSpacing": 64,
+      "layoutAlign": "INHERIT",
+      "layoutGrow": 0,
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "effects": [],
+      "fills": [],
+      "children": [
+        "107:6670",
+        "107:6671"
+      ],
+      "childFrames": []
+    },
+    "107:6672": {
+      "id": "107:6672",
+      "name": "Frame 54263",
+      "x": 1374,
+      "y": 258,
+      "width": 448,
+      "height": 65,
+      "layoutMode": "HORIZONTAL",
+      "primaryAxisAlignItems": "CENTER",
+      "counterAxisAlignItems": "CENTER",
+      "itemSpacing": 48,
+      "layoutAlign": "INHERIT",
+      "layoutGrow": 0,
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "effects": [],
+      "fills": [],
+      "children": [
+        "107:6673",
+        "107:6674"
+      ],
+      "childFrames": []
+    },
+    "107:6675": {
+      "id": "107:6675",
+      "name": "team",
+      "x": 1510,
+      "y": 350,
+      "width": 312,
+      "height": 154,
+      "layoutMode": "VERTICAL",
+      "counterAxisAlignItems": "MAX",
+      "itemSpacing": 8,
+      "layoutAlign": "INHERIT",
+      "layoutGrow": 0,
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "effects": [],
+      "fills": [],
+      "children": [
+        "107:6680"
+      ],
+      "childFrames": [
+        "107:6676"
+      ]
+    },
+    "107:6676": {
+      "id": "107:6676",
+      "name": "frame",
+      "x": 1510,
+      "y": 350,
+      "width": 312,
+      "height": 100,
+      "layoutMode": "VERTICAL",
+      "primaryAxisAlignItems": "CENTER",
+      "counterAxisAlignItems": "MAX",
+      "itemSpacing": 8,
+      "layoutAlign": "INHERIT",
+      "layoutGrow": 0,
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "effects": [],
+      "fills": [],
+      "children": [
+        "107:6679"
+      ],
+      "childFrames": [
+        "142:21652"
+      ]
+    },
+    "142:21652": {
+      "id": "142:21652",
+      "name": "Frame 54268",
+      "x": 1510,
+      "y": 350,
+      "width": 312,
+      "height": 46,
+      "layoutMode": "HORIZONTAL",
+      "counterAxisAlignItems": "CENTER",
+      "itemSpacing": 8,
+      "layoutAlign": "INHERIT",
+      "layoutGrow": 0,
+      "constraints": {
+        "vertical": "TOP",
+        "horizontal": "LEFT"
+      },
+      "effects": [],
+      "fills": [],
+      "children": [
+        "107:6677",
+        "107:6678"
+      ],
+      "childFrames": []
+    }
+  },
+  "width": 1920,
+  "height": 1080
+}
